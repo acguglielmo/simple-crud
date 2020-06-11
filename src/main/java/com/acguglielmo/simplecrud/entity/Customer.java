@@ -1,0 +1,29 @@
+package com.acguglielmo.simplecrud.entity;
+
+import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+@Data
+@Entity(name = "TB_CUSTOMER")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class Customer {
+
+    @Id
+    @Column(name = "DC_CNPJ")
+    @EqualsAndHashCode.Include
+    private final String cnpj;
+
+    @Column(name = "DC_NAME")
+    private String name;
+
+    @OneToMany
+    private Set<Contract> contracts;
+
+}
