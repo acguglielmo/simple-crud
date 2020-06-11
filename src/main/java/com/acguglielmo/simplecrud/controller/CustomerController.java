@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.acguglielmo.simplecrud.request.CustomerRequest;
 import com.acguglielmo.simplecrud.response.CustomerResponse;
 
-@RestController("/customers")
+@RestController
 public class CustomerController {
 
-    @PostMapping
+    @PostMapping("/customers")
     public ResponseEntity<CustomerResponse> create(final CustomerRequest request) {
 
         final URI location = URI.create(format("/customers/%d", 1));
