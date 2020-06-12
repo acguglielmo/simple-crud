@@ -5,6 +5,7 @@ import static java.lang.String.format;
 import java.net.URI;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,6 +46,19 @@ public class CustomerController {
     public ResponseEntity<CustomerResponse> update(
     	@PathVariable final Long id,
     	@RequestBody final CustomerRequest request) {
+
+		if ( Long.valueOf(1L).equals(id) ) {
+
+			return ResponseEntity.ok().build();
+
+		}
+
+		return ResponseEntity.notFound().build();
+
+    }
+
+    @DeleteMapping("/customers/{id}")
+    public ResponseEntity<Void> deleteBy(@PathVariable final Long id) {
 
 		if ( Long.valueOf(1L).equals(id) ) {
 

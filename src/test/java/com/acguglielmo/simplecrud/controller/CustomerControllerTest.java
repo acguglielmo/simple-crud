@@ -1,5 +1,6 @@
 package com.acguglielmo.simplecrud.controller;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -87,6 +88,22 @@ public class CustomerControllerTest {
     			.contentType( MediaType.APPLICATION_JSON )
     			.content( mapper.writeValueAsString(request) )
         	).andExpect(status().isNotFound());
+
+    }
+
+    @Test
+    public void shouldReturnHttp200OkWhenCustomerIsDeletedSucessfullyTest() throws Exception {
+
+        mockMvc.perform( delete(CUSTOMERS_RESOURCE_URI, 1))
+        	.andExpect(status().isOk());
+
+    }
+
+    @Test
+    public void shouldReturnHttp404OkWhenCustomerIsNotFoundForDeletionTest() throws Exception {
+
+        mockMvc.perform( delete(CUSTOMERS_RESOURCE_URI, 2))
+        	.andExpect(status().isNotFound());
 
     }
 
