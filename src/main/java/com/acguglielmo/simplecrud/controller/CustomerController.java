@@ -11,15 +11,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.acguglielmo.simplecrud.request.CustomerRequest;
 import com.acguglielmo.simplecrud.response.CustomerResponse;
 
 @RestController
+@RequestMapping("/customers")
 public class CustomerController {
 
-	@GetMapping("/customers/{id}")
+	@GetMapping("/{id}")
 	public ResponseEntity<CustomerResponse> findBy(@PathVariable final Long id) {
 
 		if ( Long.valueOf(1L).equals(id) ) {
@@ -32,7 +34,7 @@ public class CustomerController {
 
 	}
 
-    @PostMapping("/customers")
+    @PostMapping
     public ResponseEntity<CustomerResponse> create(
     	@RequestBody final CustomerRequest request) {
 
@@ -42,7 +44,7 @@ public class CustomerController {
 
     }
 
-    @PutMapping("/customers/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<CustomerResponse> update(
     	@PathVariable final Long id,
     	@RequestBody final CustomerRequest request) {
@@ -57,7 +59,7 @@ public class CustomerController {
 
     }
 
-    @DeleteMapping("/customers/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBy(@PathVariable final Long id) {
 
 		if ( Long.valueOf(1L).equals(id) ) {
