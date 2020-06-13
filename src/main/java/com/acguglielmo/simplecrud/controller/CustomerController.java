@@ -3,8 +3,10 @@ package com.acguglielmo.simplecrud.controller;
 import static java.lang.String.format;
 
 import java.net.URI;
+import java.util.Collections;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,14 @@ public class CustomerController {
 	@GetMapping
 	public ResponseEntity<Page<CustomerResponse>> findAll(
 		@PageableDefault final Pageable pageable) {
+
+		if (pageable.getPageNumber() == 10) {
+
+			final CustomerResponse content = new CustomerResponse();
+
+			return ResponseEntity.ok(new PageImpl<CustomerResponse>(Collections.singletonList(content)));
+
+		}
 
 		return ResponseEntity.ok(Page.empty());
 

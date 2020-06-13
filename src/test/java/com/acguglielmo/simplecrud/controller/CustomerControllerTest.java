@@ -115,4 +115,12 @@ public class CustomerControllerTest {
 
     }
 
+    @Test
+    public void shouldReturnHttp200OkWhenOneOrMoreCustomersAreFoundTest() throws Exception {
+
+        mockMvc.perform( get(CUSTOMERS_BASE_URI).queryParam("page", "10") )
+            .andExpect(status().isOk() );
+
+    }
+
 }
