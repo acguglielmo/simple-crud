@@ -1,0 +1,64 @@
+= Spring Boot Simple CRUD Application
+
+This is an example output for a service running at http://localhost:8080:
+
+== Contracts
+
+=== GET /{id}
+.request
+include::{snippets}/contracts/GET-by-id-200/http-request.adoc[]
+
+==== Contract found by id:
+.response
+include::{snippets}/contracts/GET-by-id-200/http-response.adoc[]
+
+==== Contract not found by id:
+.response
+include::{snippets}/contracts/GET-by-id-404/http-response.adoc[]
+
+
+
+=== GET with pagination
+.request
+include::{snippets}/contracts/paginated-GET-200-returning-itens/http-request.adoc[]
+
+==== Query yelds itens
+.response
+include::{snippets}/contracts/paginated-GET-200-returning-itens/http-response.adoc[]
+
+==== Query yelds no itens
+.response
+include::{snippets}/contracts/paginated-GET-200-returning-no-itens/http-response.adoc[]
+
+
+=== POST
+.request
+include::{snippets}/contracts/POST-201/http-request.adoc[]
+
+.response
+include::{snippets}/contracts/POST-201/http-response.adoc[]
+
+
+=== PUT
+.request
+include::{snippets}/contracts/PUT-200/http-request.adoc[]
+
+==== Contract updated successfully
+.response
+include::{snippets}/contracts/PUT-200/http-response.adoc[]
+
+==== Contract not found for update
+.response
+include::{snippets}/contracts/PUT-404/http-response.adoc[]
+
+=== DELETE
+.request
+include::{snippets}/contracts/DELETE-200/http-request.adoc[]
+
+==== Contract deleted sucessfully
+.response
+include::{snippets}/contracts/DELETE-200/http-response.adoc[]
+
+==== Contract not found for deletion
+.response
+include::{snippets}/contracts/DELETE-404/http-response.adoc[]
