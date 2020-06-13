@@ -2,6 +2,69 @@
 
 This is an example output for a service running at http://localhost:8080:
 
+== Customers
+
+=== GET /{id}
+.request
+include::{snippets}/customers/GET-by-id-200/http-request.adoc[]
+
+==== Customer found by id:
+.response
+include::{snippets}/customers/GET-by-id-200/http-response.adoc[]
+
+==== Customer not found by id:
+.response
+include::{snippets}/customers/GET-by-id-404/http-response.adoc[]
+
+
+
+=== GET with pagination
+.request
+include::{snippets}/customers/paginated-GET-200-returning-itens/http-request.adoc[]
+
+==== Query yelds itens
+.response
+include::{snippets}/customers/paginated-GET-200-returning-itens/http-response.adoc[]
+
+==== Query yelds no itens
+.response
+include::{snippets}/customers/paginated-GET-200-returning-no-itens/http-response.adoc[]
+
+
+=== POST
+.request
+include::{snippets}/customers/POST-201/http-request.adoc[]
+
+.response
+include::{snippets}/customers/POST-201/http-response.adoc[]
+
+
+=== PUT
+.request
+include::{snippets}/customers/PUT-200/http-request.adoc[]
+
+==== Customer updated successfully
+.response
+include::{snippets}/customers/PUT-200/http-response.adoc[]
+
+==== Customer not found for update
+.response
+include::{snippets}/customers/PUT-404/http-response.adoc[]
+
+=== DELETE
+.request
+include::{snippets}/customers/DELETE-200/http-request.adoc[]
+
+==== Customer deleted sucessfully
+.response
+include::{snippets}/customers/DELETE-200/http-response.adoc[]
+
+==== Customer not found for deletion
+.response
+include::{snippets}/customers/DELETE-404/http-response.adoc[]
+
+
+
 == Contracts
 
 === GET /{id}
