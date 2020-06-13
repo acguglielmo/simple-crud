@@ -19,22 +19,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.acguglielmo.simplecrud.request.CustomerRequest;
-import com.acguglielmo.simplecrud.response.CustomerResponse;
+import com.acguglielmo.simplecrud.request.ContractRequest;
+import com.acguglielmo.simplecrud.response.ContractResponse;
 
 @RestController
-@RequestMapping("/customers")
-public class CustomerController {
+@RequestMapping("/contracts")
+public class ContractController {
 
 	@GetMapping
-	public ResponseEntity<Page<CustomerResponse>> findAll(
+	public ResponseEntity<Page<ContractResponse>> findAll(
 		@PageableDefault final Pageable pageable) {
 
 		if (pageable.getPageNumber() == 10) {
 
-			final CustomerResponse content = new CustomerResponse();
+			final ContractResponse content = new ContractResponse();
 
-			return ResponseEntity.ok(new PageImpl<CustomerResponse>(Collections.singletonList(content)));
+			return ResponseEntity.ok(new PageImpl<ContractResponse>(Collections.singletonList(content)));
 
 		}
 
@@ -43,7 +43,7 @@ public class CustomerController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<CustomerResponse> findBy(@PathVariable final Long id) {
+	public ResponseEntity<ContractResponse> findBy(@PathVariable final Long id) {
 
 		if ( Long.valueOf(1L).equals(id) ) {
 
@@ -56,19 +56,19 @@ public class CustomerController {
 	}
 
     @PostMapping
-    public ResponseEntity<CustomerResponse> create(
-    	@RequestBody final CustomerRequest request) {
+    public ResponseEntity<ContractResponse> create(
+    	@RequestBody final ContractRequest request) {
 
-        final URI location = URI.create(format("/customers/%d", 1));
+        final URI location = URI.create(format("/contracts/%d", 1));
 
         return ResponseEntity.created(location).build();
 
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustomerResponse> update(
+    public ResponseEntity<ContractResponse> update(
     	@PathVariable final Long id,
-    	@RequestBody final CustomerRequest request) {
+    	@RequestBody final ContractRequest request) {
 
 		if ( Long.valueOf(1L).equals(id) ) {
 
