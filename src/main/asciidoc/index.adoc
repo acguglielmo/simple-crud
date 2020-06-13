@@ -1,0 +1,190 @@
+= Spring Boot Simple CRUD Application
+
+This is an example output for a service running at http://localhost:8080:
+
+== Customers
+
+=== GET /{id}
+.request
+include::{snippets}/customers/GET-by-id-200/http-request.adoc[]
+
+==== Customer found by id:
+.response
+include::{snippets}/customers/GET-by-id-200/http-response.adoc[]
+
+==== Customer not found by id:
+.response
+include::{snippets}/customers/GET-by-id-404/http-response.adoc[]
+
+
+
+=== GET with pagination
+.request
+include::{snippets}/customers/paginated-GET-200-returning-itens/http-request.adoc[]
+
+==== Query yelds itens
+.response
+include::{snippets}/customers/paginated-GET-200-returning-itens/http-response.adoc[]
+
+==== Query yelds no itens
+.response
+include::{snippets}/customers/paginated-GET-200-returning-no-itens/http-response.adoc[]
+
+
+=== POST
+.request
+include::{snippets}/customers/POST-201/http-request.adoc[]
+
+.response
+include::{snippets}/customers/POST-201/http-response.adoc[]
+
+
+=== PUT
+.request
+include::{snippets}/customers/PUT-200/http-request.adoc[]
+
+==== Customer updated successfully
+.response
+include::{snippets}/customers/PUT-200/http-response.adoc[]
+
+==== Customer not found for update
+.response
+include::{snippets}/customers/PUT-404/http-response.adoc[]
+
+=== DELETE
+.request
+include::{snippets}/customers/DELETE-200/http-request.adoc[]
+
+==== Customer deleted sucessfully
+.response
+include::{snippets}/customers/DELETE-200/http-response.adoc[]
+
+==== Customer not found for deletion
+.response
+include::{snippets}/customers/DELETE-404/http-response.adoc[]
+
+
+
+== Services
+
+=== GET /{id}
+.request
+include::{snippets}/services/GET-by-id-200/http-request.adoc[]
+
+==== Service found by id:
+.response
+include::{snippets}/services/GET-by-id-200/http-response.adoc[]
+
+==== Service not found by id:
+.response
+include::{snippets}/services/GET-by-id-404/http-response.adoc[]
+
+
+
+=== GET with pagination
+.request
+include::{snippets}/services/paginated-GET-200-returning-itens/http-request.adoc[]
+
+==== Query yelds itens
+.response
+include::{snippets}/services/paginated-GET-200-returning-itens/http-response.adoc[]
+
+==== Query yelds no itens
+.response
+include::{snippets}/services/paginated-GET-200-returning-no-itens/http-response.adoc[]
+
+
+=== POST
+.request
+include::{snippets}/services/POST-201/http-request.adoc[]
+
+.response
+include::{snippets}/services/POST-201/http-response.adoc[]
+
+
+=== PUT
+.request
+include::{snippets}/services/PUT-200/http-request.adoc[]
+
+==== Service updated successfully
+.response
+include::{snippets}/services/PUT-200/http-response.adoc[]
+
+==== Service not found for update
+.response
+include::{snippets}/services/PUT-404/http-response.adoc[]
+
+=== DELETE
+.request
+include::{snippets}/services/DELETE-200/http-request.adoc[]
+
+==== Service deleted sucessfully
+.response
+include::{snippets}/services/DELETE-200/http-response.adoc[]
+
+==== Service not found for deletion
+.response
+include::{snippets}/services/DELETE-404/http-response.adoc[]
+
+
+
+== Contracts
+
+=== GET /{id}
+.request
+include::{snippets}/contracts/GET-by-id-200/http-request.adoc[]
+
+==== Contract found by id:
+.response
+include::{snippets}/contracts/GET-by-id-200/http-response.adoc[]
+
+==== Contract not found by id:
+.response
+include::{snippets}/contracts/GET-by-id-404/http-response.adoc[]
+
+
+
+=== GET with pagination
+.request
+include::{snippets}/contracts/paginated-GET-200-returning-itens/http-request.adoc[]
+
+==== Query yelds itens
+.response
+include::{snippets}/contracts/paginated-GET-200-returning-itens/http-response.adoc[]
+
+==== Query yelds no itens
+.response
+include::{snippets}/contracts/paginated-GET-200-returning-no-itens/http-response.adoc[]
+
+
+=== POST
+.request
+include::{snippets}/contracts/POST-201/http-request.adoc[]
+
+.response
+include::{snippets}/contracts/POST-201/http-response.adoc[]
+
+
+=== PUT
+.request
+include::{snippets}/contracts/PUT-200/http-request.adoc[]
+
+==== Contract updated successfully
+.response
+include::{snippets}/contracts/PUT-200/http-response.adoc[]
+
+==== Contract not found for update
+.response
+include::{snippets}/contracts/PUT-404/http-response.adoc[]
+
+=== DELETE
+.request
+include::{snippets}/contracts/DELETE-200/http-request.adoc[]
+
+==== Contract deleted sucessfully
+.response
+include::{snippets}/contracts/DELETE-200/http-response.adoc[]
+
+==== Contract not found for deletion
+.response
+include::{snippets}/contracts/DELETE-404/http-response.adoc[]
