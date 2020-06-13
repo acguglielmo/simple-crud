@@ -85,7 +85,7 @@ public class ContractControllerTest {
 				.contentType( MediaType.APPLICATION_JSON )
 				.content( mapper.writeValueAsString(request) )
         	).andExpect(status().isOk())
-        	.andDo( document("PUT-200") );
+        	.andDo( document("PUT-200", new RequestBodySnippet(), new ResponseBodySnippet() ) );
 
     }
 
