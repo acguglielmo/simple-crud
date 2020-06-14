@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ContextConfiguration;
@@ -59,6 +60,9 @@ public class CustomerServiceTest {
 	@Test
 	public void shouldReturnPageWithCustomersTest() {
 
+		when( repository.findAllByActiveTrue( any() ) )
+			.thenReturn( new PageImpl<>( Fixture.from( Customer.class ).gimme(1, "valid") ) );
+
 		final Pageable pageable = PageRequest.of(0, 10);
 
 		final Page<CustomerResponse> result = customerService.findAll(pageable);
@@ -73,6 +77,9 @@ public class CustomerServiceTest {
 
 	@Test
 	public void shouldReturnEmptyPageTest() {
+
+		when( repository.findAllByActiveTrue( any() ) )
+			.thenReturn( Page.empty() );
 
 		final Pageable pageable = PageRequest.of(1, 10);
 
