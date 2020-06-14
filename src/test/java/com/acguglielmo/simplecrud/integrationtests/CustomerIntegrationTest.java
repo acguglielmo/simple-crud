@@ -23,15 +23,15 @@ public class CustomerIntegrationTest extends AbstractIntegrationTest {
 	@Test
 	public void shouldCreateNewCustomerTest() throws Exception {
 
-		final CustomerResponse newCustomer = createNewCustomer();
+		final CustomerResponse customer = create();
 
-		findCustomer(newCustomer);
+		find(customer);
 
-		updateCustomer(newCustomer);
+		update(customer);
 
 	}
 
-	private void findCustomer(final CustomerResponse customer) throws Exception {
+	private void find(final CustomerResponse customer) throws Exception {
 
         mockMvc.perform( get(CUSTOMERS_RESOURCE_URI, customer.getCnpj() ) )
 	        .andExpect( status().isOk() )
@@ -40,33 +40,33 @@ public class CustomerIntegrationTest extends AbstractIntegrationTest {
 
 	}
 
-	private CustomerResponse createNewCustomer() throws Exception {
+	private CustomerResponse create() throws Exception {
 
 		final CustomerRequest request = Fixture.from(CustomerRequest.class).gimme("valid");
 
         final String contentAsString = mockMvc.perform( post( CUSTOMERS_BASE_URI )
-    		.contentType( MediaType.APPLICATION_JSON )
-    		.content( mapper.writeValueAsString(request) )
-    	).andExpect(status().isCreated())
-        .andReturn()
-        .getResponse()
-        .getContentAsString();
+	    		.contentType( MediaType.APPLICATION_JSON )
+	    		.content( mapper.writeValueAsString(request) )
+	    	).andExpect(status().isCreated())
+	        .andReturn()
+	        .getResponse()
+	        .getContentAsString();
 
         return mapper.readValue(contentAsString, CustomerResponse.class);
 
 	}
 
-	private void updateCustomer(final CustomerResponse customer) throws Exception {
+	private void update(final CustomerResponse customer) throws Exception {
 
 		final CustomerRequest request = Fixture.from(CustomerRequest.class).gimme("updating");
 
         mockMvc.perform( put(CUSTOMERS_RESOURCE_URI, customer.getCnpj() )
-			.contentType( MediaType.APPLICATION_JSON )
-			.content( mapper.writeValueAsString(request) )
-    	).andExpect(status().isOk())
-    	.andExpect( jsonPath("$").exists() )
-    	.andExpect( jsonPath("$.cnpj").value( customer.getCnpj() ) )
-    	.andExpect( jsonPath("$.name").value( request.getName() ) );
+				.contentType( MediaType.APPLICATION_JSON )
+				.content( mapper.writeValueAsString(request) )
+	    	).andExpect(status().isOk())
+	    	.andExpect( jsonPath("$").exists() )
+	    	.andExpect( jsonPath("$.cnpj").value( customer.getCnpj() ) )
+	    	.andExpect( jsonPath("$.name").value( request.getName() ) );
 
 	}
 }
