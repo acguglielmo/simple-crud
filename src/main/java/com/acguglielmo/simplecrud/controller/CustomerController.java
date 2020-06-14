@@ -3,10 +3,9 @@ package com.acguglielmo.simplecrud.controller;
 import static java.lang.String.format;
 
 import java.net.URI;
-import java.util.Collections;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -21,37 +20,27 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.acguglielmo.simplecrud.request.CustomerRequest;
 import com.acguglielmo.simplecrud.response.CustomerResponse;
+import com.acguglielmo.simplecrud.service.CustomerService;
 
 @RestController
 @RequestMapping("/customers")
 public class CustomerController {
 
+	@Autowired
+	private CustomerService customerService;
+
 	@GetMapping
 	public ResponseEntity<Page<CustomerResponse>> findAll(
 		@PageableDefault final Pageable pageable) {
 
-		if (pageable.getPageNumber() == 10) {
-
-			final CustomerResponse content = new CustomerResponse();
-
-			return ResponseEntity.ok(new PageImpl<CustomerResponse>(Collections.singletonList(content)));
-
-		}
-
-		return ResponseEntity.ok(Page.empty());
+		return ResponseEntity.ok( customerService.findAll(pageable) );
 
 	}
 
-	@GetMapping("/{id}")
-	public ResponseEntity<CustomerResponse> findBy(@PathVariable final Long id) {
+	@GetMapping("/{cnpj}")
+	public ResponseEntity<CustomerResponse> findBy(@PathVariable final String cnpj) {
 
-		if ( Long.valueOf(1L).equals(id) ) {
-
-			return ResponseEntity.ok().build();
-
-		}
-
-		return ResponseEntity.notFound().build();
+		return ResponseEntity.of( customerService.findBy(cnpj) );
 
 	}
 
@@ -59,37 +48,28 @@ public class CustomerController {
     public ResponseEntity<CustomerResponse> create(
     	@RequestBody final CustomerRequest request) {
 
-        final URI location = URI.create(format("/customers/%d", 1));
+    	final CustomerResponse customerResponse = customerService.create(request);
 
-        return ResponseEntity.created(location).build();
+        final URI location = URI.create( format("/customers/%s", customerResponse.getCnpj() ));
+
+        return ResponseEntity.created(location).body(customerResponse);
 
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{cnpj}")
     public ResponseEntity<CustomerResponse> update(
-    	@PathVariable final Long id,
+    	@PathVariable final String cnpj,
     	@RequestBody final CustomerRequest request) {
 
-		if ( Long.valueOf(1L).equals(id) ) {
-
-			return ResponseEntity.ok().build();
-
-		}
-
-		return ResponseEntity.notFound().build();
+    	return ResponseEntity.of( customerService.update(cnpj, request) );
 
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBy(@PathVariable final Long id) {
+    @DeleteMapping("/{cnpj}")
+    public ResponseEntity<Void> deleteBy(@PathVariable final String cnpj) {
 
-		if ( Long.valueOf(1L).equals(id) ) {
-
-			return ResponseEntity.ok().build();
-
-		}
-
-		return ResponseEntity.notFound().build();
+    	return customerService.delete(cnpj) ?
+    		ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
 
     }
 

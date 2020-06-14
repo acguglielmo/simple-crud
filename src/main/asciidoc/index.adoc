@@ -53,11 +53,11 @@ include::{snippets}/customers/PUT-404/http-response.adoc[]
 
 === DELETE
 .request
-include::{snippets}/customers/DELETE-200/http-request.adoc[]
+include::{snippets}/customers/DELETE-204/http-request.adoc[]
 
 ==== Customer deleted sucessfully
 .response
-include::{snippets}/customers/DELETE-200/http-response.adoc[]
+include::{snippets}/customers/DELETE-204/http-response.adoc[]
 
 ==== Customer not found for deletion
 .response

@@ -9,8 +9,10 @@ import javax.persistence.OneToMany;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 @Entity(name = "TB_CUSTOMER")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Customer {
@@ -18,12 +20,20 @@ public class Customer {
     @Id
     @Column(name = "DC_CNPJ")
     @EqualsAndHashCode.Include
-    private final String cnpj;
+    private String cnpj;
 
     @Column(name = "DC_NAME")
     private String name;
 
     @OneToMany
     private Set<Contract> contracts;
+
+    public Customer(final String cnpj) {
+
+    	super();
+
+    	this.cnpj = cnpj;
+
+    }
 
 }
