@@ -37,10 +37,17 @@ public class CustomerControllerTest extends AbstractControllerTest {
 
     	final CustomerRequest request = Fixture.from(CustomerRequest.class).gimme("valid");
 
+    	final CustomerResponse response = Fixture.from( CustomerResponse.class ).gimme( "valid" );
+
+    	when( customerService.create( any() ) ).thenReturn( response );
+
         mockMvc.perform( post( CUSTOMERS_BASE_URI )
         		.contentType( MediaType.APPLICATION_JSON )
         		.content( mapper.writeValueAsString(request) )
         	).andExpect(status().isCreated())
+        	.andExpect( jsonPath("$").exists() )
+        	.andExpect( jsonPath("$.cnpj").value( response.getCnpj() ) )
+        	.andExpect( jsonPath("$.name").value( response.getName() ) )
         	.andDo( document("POST-201", new RequestBodySnippet(), new ResponseBodySnippet() ) );
 
     }

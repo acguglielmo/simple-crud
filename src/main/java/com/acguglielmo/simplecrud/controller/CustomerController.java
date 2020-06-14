@@ -48,9 +48,11 @@ public class CustomerController {
     public ResponseEntity<CustomerResponse> create(
     	@RequestBody final CustomerRequest request) {
 
-        final URI location = URI.create(format("/customers/%d", 1));
+    	final CustomerResponse customerResponse = customerService.create(request);
 
-        return ResponseEntity.created(location).build();
+        final URI location = URI.create( format("/customers/%s", customerResponse.getCnpj() ));
+
+        return ResponseEntity.created(location).body(customerResponse);
 
     }
 
