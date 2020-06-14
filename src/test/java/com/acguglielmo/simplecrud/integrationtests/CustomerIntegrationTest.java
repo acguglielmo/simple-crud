@@ -2,6 +2,7 @@ package com.acguglielmo.simplecrud.integrationtests;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -25,6 +26,8 @@ public class CustomerIntegrationTest extends AbstractIntegrationTest {
 		final CustomerResponse newCustomer = createNewCustomer();
 
 		findCustomer(newCustomer);
+
+		updateCustomer(newCustomer);
 
 	}
 
@@ -50,5 +53,20 @@ public class CustomerIntegrationTest extends AbstractIntegrationTest {
         .getContentAsString();
 
         return mapper.readValue(contentAsString, CustomerResponse.class);
+
+	}
+
+	private void updateCustomer(final CustomerResponse customer) throws Exception {
+
+		final CustomerRequest request = Fixture.from(CustomerRequest.class).gimme("updating");
+
+        mockMvc.perform( put(CUSTOMERS_RESOURCE_URI, customer.getCnpj() )
+			.contentType( MediaType.APPLICATION_JSON )
+			.content( mapper.writeValueAsString(request) )
+    	).andExpect(status().isOk())
+    	.andExpect( jsonPath("$").exists() )
+    	.andExpect( jsonPath("$.cnpj").value( customer.getCnpj() ) )
+    	.andExpect( jsonPath("$.name").value( request.getName() ) );
+
 	}
 }

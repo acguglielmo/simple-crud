@@ -16,6 +16,11 @@ public class CustomerRequestTemplateLoader implements TemplateLoader {
 			add("name", "customer");
 		}});
 
+		Fixture.of( CustomerRequest.class ).addTemplate("updating", new Rule() {{
+			add("cnpj", "123456789");
+			add("name", "updated name");
+		}});
+
 	}
 
 }

@@ -43,7 +43,7 @@ public class CustomerService {
 
 	public Optional<CustomerResponse> findBy(final String cnpj) {
 
-		return repository.findById(cnpj)
+		return findEntity( cnpj )
 			.map( mapper::fromEntity );
 
 	}
@@ -58,14 +58,16 @@ public class CustomerService {
 
 	public Optional<CustomerResponse> update( final String cnpj, final CustomerRequest customer) {
 
-		return findBy( cnpj )
+		return findEntity( cnpj )
 			.map( e ->
-				new CustomerResponse(
-					customer.getCnpj(),
-					customer.getName(),
-					new HashSet<>() )
+				{
+					e.setName( customer.getName() );
+					return e;
+				}
+			)
+			.map( repository::save )
+			.map( mapper::fromEntity );
 
-			);
 	}
 
 	public boolean delete( final String cnpj) {
@@ -73,6 +75,12 @@ public class CustomerService {
 		return findBy( cnpj )
 			.map(e -> true)
 			.orElse( false );
+
+	}
+
+	private Optional<Customer> findEntity(final String cnpj) {
+
+		return repository.findById(cnpj);
 
 	}
 

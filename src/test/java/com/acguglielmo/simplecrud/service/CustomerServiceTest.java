@@ -131,8 +131,13 @@ public class CustomerServiceTest {
 	@Test
 	public void shouldReturnOptionalWithUpdatedCustomerInfoIfCustomerExistsTest() throws Exception {
 
+		final Customer oldCustomer = Fixture.from( Customer.class ).gimme( "valid");
+
 		when( repository.findById( anyString() ) )
-			.thenReturn( Optional.of( Fixture.from( Customer.class ).gimme( "valid") ) );
+			.thenReturn( Optional.of( oldCustomer ) );
+
+		when( repository.save(any()) )
+			.thenAnswer( e -> e.getArgument(0) );
 
 		final CustomerRequest request =
 			Fixture.from( CustomerRequest.class ).gimme( "valid");
@@ -144,7 +149,7 @@ public class CustomerServiceTest {
 
 		assertThat(result.isPresent(), is(true) );
 
-		assertThat(result.get().getCnpj(), is( request.getCnpj() ) );
+		assertThat(result.get().getCnpj(), is( oldCustomer.getCnpj() ) );
 
 		assertThat(result.get().getName(), is( request.getName() ) );
 
