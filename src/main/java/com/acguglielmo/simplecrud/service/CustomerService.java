@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.acguglielmo.simplecrud.request.CustomerRequest;
 import com.acguglielmo.simplecrud.response.CustomerResponse;
 
 @Service
@@ -42,6 +43,18 @@ public class CustomerService {
 		}
 
 		return Optional.empty();
+	}
+
+	public CustomerResponse create( final CustomerRequest customer) {
+
+		final CustomerResponse customerResponse =
+			new CustomerResponse(
+				customer.getCnpj(),
+				customer.getName(),
+				new HashSet<>() );
+
+		return customerResponse;
+
 	}
 
 }

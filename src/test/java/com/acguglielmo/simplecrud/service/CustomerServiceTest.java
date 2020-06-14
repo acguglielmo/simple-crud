@@ -1,11 +1,13 @@
 package com.acguglielmo.simplecrud.service;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,13 +16,24 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import com.acguglielmo.simplecrud.request.CustomerRequest;
 import com.acguglielmo.simplecrud.response.CustomerResponse;
+
+import br.com.six2six.fixturefactory.Fixture;
+import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader;
 
 @ExtendWith(MockitoExtension.class)
 public class CustomerServiceTest {
 
 	@InjectMocks
 	private CustomerService customerService;
+
+	@BeforeEach
+	public void beforeEach() {
+
+		FixtureFactoryLoader.loadTemplates("com.acguglielmo.simplecrud.template");
+
+	}
 
 	@Test
 	public void shouldReturnPageWithCustomersTest() {
@@ -69,6 +82,22 @@ public class CustomerServiceTest {
 		assertThat(result, notNullValue() );
 
 		assertThat(result.isPresent(), is(false) );
+
+	}
+
+	@Test
+	public void shouldCreateNewCustomerSucessfullyTest() throws Exception {
+
+		final CustomerRequest customer =
+			Fixture.from( CustomerRequest.class ).gimme("valid");
+
+		final CustomerResponse result = customerService.create(customer);
+
+		assertThat(result, notNullValue() );
+
+		assertThat(result.getCnpj(), equalTo( customer.getCnpj() ) );
+
+		assertThat(result.getName(), equalTo( customer.getName() ) );
 
 	}
 
