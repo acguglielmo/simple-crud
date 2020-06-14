@@ -25,6 +25,9 @@ public class Customer {
     @Column(name = "DC_NAME")
     private String name;
 
+    @Column(name = "IN_ACTIVE")
+    private boolean active = true;
+
     @OneToMany
     private Set<Contract> contracts;
 
@@ -33,6 +36,14 @@ public class Customer {
     	super();
 
     	this.cnpj = cnpj;
+
+    }
+
+    public Customer inactivate() {
+
+    	this.active = false;
+
+    	return this;
 
     }
 

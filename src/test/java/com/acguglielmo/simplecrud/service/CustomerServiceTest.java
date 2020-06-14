@@ -87,7 +87,7 @@ public class CustomerServiceTest {
 	@Test
 	public void shouldReturnOptionalWithCustomerWhenFoundByCnpjTest() {
 
-		when( repository.findById( anyString() ) )
+		when( repository.findByCnpjAndActiveTrue( anyString() ) )
 			.thenReturn( Optional.of( Fixture.from( Customer.class ).gimme( "valid") ) );
 
 		final Optional<CustomerResponse> result = customerService.findBy( "01567964000189" );
@@ -133,7 +133,7 @@ public class CustomerServiceTest {
 
 		final Customer oldCustomer = Fixture.from( Customer.class ).gimme( "valid");
 
-		when( repository.findById( anyString() ) )
+		when( repository.findByCnpjAndActiveTrue( anyString() ) )
 			.thenReturn( Optional.of( oldCustomer ) );
 
 		when( repository.save(any()) )
@@ -173,7 +173,7 @@ public class CustomerServiceTest {
 	@Test
 	public void shouldReturnTrueWhenDeletingIfCustomerExistsTest() throws Exception {
 
-		when( repository.findById( anyString() ) )
+		when( repository.findByCnpjAndActiveTrue( anyString() ) )
 			.thenReturn( Optional.of( Fixture.from( Customer.class ).gimme( "valid") ) );
 
 		boolean result = customerService.delete("01567964000189");

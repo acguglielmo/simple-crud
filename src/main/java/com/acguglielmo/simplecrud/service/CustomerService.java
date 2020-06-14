@@ -75,7 +75,7 @@ public class CustomerService {
 		return findEntity( cnpj )
 			.map(e -> {
 
-				repository.delete(e);
+				repository.save( e.inactivate() );
 
 				return true;
 
@@ -86,7 +86,7 @@ public class CustomerService {
 
 	private Optional<Customer> findEntity(final String cnpj) {
 
-		return repository.findById(cnpj);
+		return repository.findByCnpjAndActiveTrue(cnpj);
 
 	}
 
