@@ -69,4 +69,12 @@ public class CustomerService {
 			);
 	}
 
+	public boolean delete( final String cnpj) {
+
+		return findBy( cnpj )
+			.map(e -> true)
+			.orElse( false );
+
+	}
+
 }

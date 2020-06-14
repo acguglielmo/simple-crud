@@ -121,7 +121,7 @@ public class CustomerServiceTest {
 	}
 
 	@Test
-	public void shouldReturnOptionalEmptyIfCustomerDoesNotExistTest() throws Exception {
+	public void shouldReturnOptionalEmptyWhenUpdatingIfCustomerDoesNotExistTest() throws Exception {
 
 		final CustomerRequest request =
 			Fixture.from( CustomerRequest.class ).gimme( "valid");
@@ -134,4 +134,23 @@ public class CustomerServiceTest {
 		assertThat(result.isPresent(), is(false) );
 
 	}
+
+	@Test
+	public void shouldReturnTrueWhenDeletingIfCustomerDoesNotExistTest() throws Exception {
+
+		boolean result = customerService.delete("01567964000189");
+
+		assertThat(result, is(true) );
+
+	}
+
+	@Test
+	public void shouldReturnFalseWhenDeletingIfCustomerDoesNotExistTest() throws Exception {
+
+		boolean result = customerService.delete("000000000");
+
+		assertThat(result, is(false) );
+
+	}
+
 }
