@@ -7,42 +7,22 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.RequestBodySnippet;
 import org.springframework.restdocs.payload.ResponseBodySnippet;
-import org.springframework.test.web.servlet.MockMvc;
 
 import com.acguglielmo.simplecrud.request.ServiceRequest;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.six2six.fixturefactory.Fixture;
-import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader;
 
-@WebMvcTest
 @AutoConfigureRestDocs(outputDir = "target/snippets/services")
-public class ServiceControllerTest {
+public class ServiceControllerTest extends AbstractControllerTest {
 
     private static final String SERVICES_BASE_URI = "/services";
 
     private static final String SERVICES_RESOURCE_URI = SERVICES_BASE_URI + "/{id}";
-
-    @Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @BeforeEach
-    public void beforeEach() {
-
-    	FixtureFactoryLoader.loadTemplates("com.acguglielmo.simplecrud.template");
-
-    }
 
     @Test
     public void shouldReturnHttp201CreatedWhenServiceIsCreatedSucessfullyTest() throws Exception {
