@@ -1,19 +1,25 @@
 package com.acguglielmo.simplecrud.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.RequestBodySnippet;
 import org.springframework.restdocs.payload.ResponseBodySnippet;
 
 import com.acguglielmo.simplecrud.request.CustomerRequest;
+import com.acguglielmo.simplecrud.response.CustomerResponse;
 
 import br.com.six2six.fixturefactory.Fixture;
 
@@ -102,8 +108,14 @@ public class CustomerControllerTest extends AbstractControllerTest {
     @Test
     public void shouldReturnHttp200OkWhenNoCustomersAreFoundTest() throws Exception {
 
+    	when( customerService.findAll( any()) )
+    		.thenReturn( Page.empty() );
+
         mockMvc.perform( get(CUSTOMERS_BASE_URI) )
             .andExpect(status().isOk() )
+            .andExpect( jsonPath("$").exists() )
+            .andExpect( jsonPath("$.content").exists() )
+            .andExpect( jsonPath("$.content.size()").value(0) )
             .andDo( document("paginated-GET-200-returning-no-itens") );
 
     }
@@ -111,8 +123,17 @@ public class CustomerControllerTest extends AbstractControllerTest {
     @Test
     public void shouldReturnHttp200OkWhenOneOrMoreCustomersAreFoundTest() throws Exception {
 
-        mockMvc.perform( get(CUSTOMERS_BASE_URI).queryParam("page", "10") )
+    	final Page<CustomerResponse> page =
+    			new PageImpl<>( Fixture.from( CustomerResponse.class ).gimme(1, "valid") );
+
+    	when( customerService.findAll( any()) )
+			.thenReturn( page );
+
+        mockMvc.perform( get(CUSTOMERS_BASE_URI).queryParam("page", "0") )
             .andExpect(status().isOk() )
+            .andExpect( jsonPath("$").exists() )
+            .andExpect( jsonPath("$.content").exists() )
+            .andExpect( jsonPath("$.content.size()").value(1) )
             .andDo( document("paginated-GET-200-returning-itens", new ResponseBodySnippet() ) );
 
     }
