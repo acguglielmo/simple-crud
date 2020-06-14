@@ -39,16 +39,17 @@ public class CustomerService {
 
 	public Optional<CustomerResponse> findBy(final String cnpj) {
 
-		if ( "01567964000189".equals( cnpj ) ) {
+		final Optional<Customer> customer = repository.findById(cnpj);
 
-			final CustomerResponse customer =
-				new CustomerResponse("01567964000189", "customer", new HashSet<>() );
+		return customer.map( e ->
 
-			return Optional.of(customer);
+			new CustomerResponse(
+				e.getCnpj(),
+				e.getName(),
+				new HashSet<>() )
 
-		}
+		);
 
-		return Optional.empty();
 	}
 
 	public CustomerResponse create( final CustomerRequest request) {

@@ -1,6 +1,8 @@
 package com.acguglielmo.simplecrud.integrationtests;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.Test;
@@ -15,10 +17,23 @@ public class CustomerIntegrationTest extends AbstractIntegrationTest {
 
     private static final String CUSTOMERS_BASE_URI = "/customers";
 
+    private static final String CUSTOMERS_RESOURCE_URI = CUSTOMERS_BASE_URI + "/{id}";
+
 	@Test
 	public void shouldCreateNewCustomerTest() throws Exception {
 
-		createNewCustomer();
+		final CustomerResponse newCustomer = createNewCustomer();
+
+		findCustomer(newCustomer);
+
+	}
+
+	private void findCustomer(final CustomerResponse customer) throws Exception {
+
+        mockMvc.perform( get(CUSTOMERS_RESOURCE_URI, customer.getCnpj() ) )
+	        .andExpect( status().isOk() )
+	        .andExpect( jsonPath("$").exists() )
+	        .andExpect( jsonPath("$.cnpj").value( customer.getCnpj() ) );
 
 	}
 
