@@ -2,6 +2,8 @@ package com.acguglielmo.simplecrud.service;
 
 import static java.util.Collections.singletonList;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +20,7 @@ public class CustomerService {
 
 			final CustomerResponse customer = new CustomerResponse();
 
-			customer.setCnpj("454545");
+			customer.setCnpj("01567964000189");
 
 			return new PageImpl<>( singletonList(customer) );
 
@@ -26,6 +28,21 @@ public class CustomerService {
 
 		return Page.empty();
 
+	}
+
+	public Optional<CustomerResponse> findBy(final String cnpj) {
+
+		if ( "01567964000189".equals( cnpj ) ) {
+
+			final CustomerResponse customer = new CustomerResponse();
+
+			customer.setCnpj("01567964000189");
+
+			return Optional.of(customer);
+
+		}
+
+		return Optional.empty();
 	}
 
 }

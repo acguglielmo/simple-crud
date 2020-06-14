@@ -4,6 +4,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -45,6 +47,28 @@ public class CustomerServiceTest {
 		assertThat(result, notNullValue() );
 
 		assertThat(result.isEmpty(), is(true) );
+
+	}
+
+	@Test
+	public void shouldReturnOptionalWithCustomerWhenFoundByCnpjTest() {
+
+		final Optional<CustomerResponse> result = customerService.findBy( "01567964000189" );
+
+		assertThat(result, notNullValue() );
+
+		assertThat(result.isPresent(), is(true) );
+
+	}
+
+	@Test
+	public void shouldReturnOptionalEmptyWhenNotFoundByCnpjTest() {
+
+		final Optional<CustomerResponse> result = customerService.findBy( "000000000000" );
+
+		assertThat(result, notNullValue() );
+
+		assertThat(result.isPresent(), is(false) );
 
 	}
 
