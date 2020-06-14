@@ -5,16 +5,22 @@ import static java.util.Collections.singletonList;
 import java.util.HashSet;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.acguglielmo.simplecrud.entity.Customer;
+import com.acguglielmo.simplecrud.repository.CustomerRepository;
 import com.acguglielmo.simplecrud.request.CustomerRequest;
 import com.acguglielmo.simplecrud.response.CustomerResponse;
 
 @Service
 public class CustomerService {
+
+	@Autowired
+	private CustomerRepository repository;
 
 	public Page<CustomerResponse> findAll(final Pageable pageable) {
 
@@ -45,12 +51,17 @@ public class CustomerService {
 		return Optional.empty();
 	}
 
-	public CustomerResponse create( final CustomerRequest customer) {
+	public CustomerResponse create( final CustomerRequest request) {
+
+		final Customer entity = new Customer( request.getCnpj() );
+		entity.setName( request.getName() );
+
+		final Customer savedEntity = repository.save(entity);
 
 		final CustomerResponse customerResponse =
 			new CustomerResponse(
-				customer.getCnpj(),
-				customer.getName(),
+				savedEntity.getCnpj(),
+				savedEntity.getName(),
 				new HashSet<>() );
 
 		return customerResponse;

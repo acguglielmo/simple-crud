@@ -4,6 +4,8 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
@@ -11,11 +13,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import com.acguglielmo.simplecrud.repository.CustomerRepository;
 import com.acguglielmo.simplecrud.request.CustomerRequest;
 import com.acguglielmo.simplecrud.response.CustomerResponse;
 
@@ -24,6 +28,9 @@ import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader;
 
 @ExtendWith(MockitoExtension.class)
 public class CustomerServiceTest {
+
+	@Mock
+	private CustomerRepository repository;
 
 	@InjectMocks
 	private CustomerService customerService;
@@ -90,6 +97,9 @@ public class CustomerServiceTest {
 
 		final CustomerRequest customer =
 			Fixture.from( CustomerRequest.class ).gimme("valid");
+
+		when( repository.save(any()) )
+			.thenAnswer( e -> e.getArgument(0) );
 
 		final CustomerResponse result = customerService.create(customer);
 
