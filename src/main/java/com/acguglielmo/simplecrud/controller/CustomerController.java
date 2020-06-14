@@ -37,16 +37,10 @@ public class CustomerController {
 
 	}
 
-	@GetMapping("/{id}")
-	public ResponseEntity<CustomerResponse> findBy(@PathVariable final Long id) {
+	@GetMapping("/{cnpj}")
+	public ResponseEntity<CustomerResponse> findBy(@PathVariable final String cnpj) {
 
-		if ( Long.valueOf(1L).equals(id) ) {
-
-			return ResponseEntity.ok().build();
-
-		}
-
-		return ResponseEntity.notFound().build();
+		return ResponseEntity.of( customerService.findBy(cnpj) );
 
 	}
 

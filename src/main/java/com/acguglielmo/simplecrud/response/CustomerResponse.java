@@ -2,9 +2,11 @@ package com.acguglielmo.simplecrud.response;
 
 import java.util.Set;
 
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@Setter
+@Getter
+@AllArgsConstructor
 public class CustomerResponse {
 
     private String cnpj;

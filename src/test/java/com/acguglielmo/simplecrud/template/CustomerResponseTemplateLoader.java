@@ -1,5 +1,7 @@
 package com.acguglielmo.simplecrud.template;
 
+import java.util.HashSet;
+
 import com.acguglielmo.simplecrud.response.CustomerResponse;
 
 import br.com.six2six.fixturefactory.Fixture;
@@ -12,8 +14,9 @@ public class CustomerResponseTemplateLoader implements TemplateLoader {
 	public void load() {
 
 		Fixture.of( CustomerResponse.class ).addTemplate("valid", new Rule() {{
-			add("cnpj", "454548485");
+			add("cnpj", "01567964000189");
 			add("name", "customer");
+			add("contracts", new HashSet<>() );
 		}});
 
 	}

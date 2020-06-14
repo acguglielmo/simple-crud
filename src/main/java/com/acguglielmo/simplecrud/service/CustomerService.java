@@ -2,6 +2,7 @@ package com.acguglielmo.simplecrud.service;
 
 import static java.util.Collections.singletonList;
 
+import java.util.HashSet;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -18,9 +19,8 @@ public class CustomerService {
 
 		if (pageable.getPageNumber() == 0 ) {
 
-			final CustomerResponse customer = new CustomerResponse();
-
-			customer.setCnpj("01567964000189");
+			final CustomerResponse customer =
+				new CustomerResponse("01567964000189", "customer", new HashSet<>() );
 
 			return new PageImpl<>( singletonList(customer) );
 
@@ -34,9 +34,8 @@ public class CustomerService {
 
 		if ( "01567964000189".equals( cnpj ) ) {
 
-			final CustomerResponse customer = new CustomerResponse();
-
-			customer.setCnpj("01567964000189");
+			final CustomerResponse customer =
+				new CustomerResponse("01567964000189", "customer", new HashSet<>() );
 
 			return Optional.of(customer);
 
