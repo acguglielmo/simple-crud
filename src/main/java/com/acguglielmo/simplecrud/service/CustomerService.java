@@ -50,18 +50,9 @@ public class CustomerService {
 
 	public CustomerResponse create( final CustomerRequest request) {
 
-		final Customer entity = new Customer( request.getCnpj() );
-		entity.setName( request.getName() );
+		final Customer savedEntity = repository.save( mapper.fromRequest(request) );
 
-		final Customer savedEntity = repository.save(entity);
-
-		final CustomerResponse customerResponse =
-			new CustomerResponse(
-				savedEntity.getCnpj(),
-				savedEntity.getName(),
-				new HashSet<>() );
-
-		return customerResponse;
+		return mapper.fromEntity(savedEntity);
 
 	}
 
