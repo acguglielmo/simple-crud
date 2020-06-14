@@ -56,18 +56,12 @@ public class CustomerController {
 
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{cnpj}")
     public ResponseEntity<CustomerResponse> update(
-    	@PathVariable final Long id,
+    	@PathVariable final String cnpj,
     	@RequestBody final CustomerRequest request) {
 
-		if ( Long.valueOf(1L).equals(id) ) {
-
-			return ResponseEntity.ok().build();
-
-		}
-
-		return ResponseEntity.notFound().build();
+    	return ResponseEntity.of( customerService.update(cnpj, request) );
 
     }
 

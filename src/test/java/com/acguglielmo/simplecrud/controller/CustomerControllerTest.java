@@ -1,6 +1,7 @@
 package com.acguglielmo.simplecrud.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -84,10 +85,18 @@ public class CustomerControllerTest extends AbstractControllerTest {
 
     	final CustomerRequest request = Fixture.from(CustomerRequest.class).gimme("valid");
 
-        mockMvc.perform( put(CUSTOMERS_RESOURCE_URI, 1)
+    	final CustomerResponse response = Fixture.from(CustomerResponse.class).gimme("valid");
+
+    	when( customerService.update( eq("22544554"), any()) )
+    		.thenReturn( Optional.of( response ) );
+
+        mockMvc.perform( put(CUSTOMERS_RESOURCE_URI, "22544554")
 				.contentType( MediaType.APPLICATION_JSON )
 				.content( mapper.writeValueAsString(request) )
         	).andExpect(status().isOk())
+        	.andExpect( jsonPath("$").exists() )
+        	.andExpect( jsonPath("$.cnpj").value( response.getCnpj() ) )
+        	.andExpect( jsonPath("$.name").value( response.getName() ) )
         	.andDo( document("PUT-200", new RequestBodySnippet(), new ResponseBodySnippet() ) );
 
     }
@@ -97,10 +106,14 @@ public class CustomerControllerTest extends AbstractControllerTest {
 
     	final CustomerRequest request = Fixture.from(CustomerRequest.class).gimme("valid");
 
-        mockMvc.perform( put(CUSTOMERS_RESOURCE_URI, 2)
+    	when( customerService.update( eq("22544554"), any()) )
+    		.thenReturn( Optional.empty() );
+
+        mockMvc.perform( put(CUSTOMERS_RESOURCE_URI, "22544554")
     			.contentType( MediaType.APPLICATION_JSON )
     			.content( mapper.writeValueAsString(request) )
         	).andExpect(status().isNotFound())
+        	.andExpect( jsonPath("$").doesNotExist() )
         	.andDo( document("PUT-404") );
 
     }
