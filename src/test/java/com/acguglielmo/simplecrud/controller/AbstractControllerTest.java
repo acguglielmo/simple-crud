@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.acguglielmo.simplecrud.SimpleCrudApplication;
 import com.acguglielmo.simplecrud.service.CustomerService;
+import com.acguglielmo.simplecrud.service.ServiceService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader;
@@ -30,6 +31,9 @@ public abstract class AbstractControllerTest {
 
     @MockBean
     CustomerService customerService;
+
+    @MockBean
+    ServiceService serviceService;
 
     @BeforeEach
     public void beforeEach() {

@@ -3,10 +3,9 @@ package com.acguglielmo.simplecrud.controller;
 import static java.lang.String.format;
 
 import java.net.URI;
-import java.util.Collections;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -21,37 +20,27 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.acguglielmo.simplecrud.request.ServiceRequest;
 import com.acguglielmo.simplecrud.response.ServiceResponse;
+import com.acguglielmo.simplecrud.service.ServiceService;
 
 @RestController
 @RequestMapping("/services")
 public class ServiceController {
 
+	@Autowired
+	private ServiceService serviceService;
+
 	@GetMapping
 	public ResponseEntity<Page<ServiceResponse>> findAll(
 		@PageableDefault final Pageable pageable) {
 
-		if (pageable.getPageNumber() == 10) {
-
-			final ServiceResponse content = new ServiceResponse();
-
-			return ResponseEntity.ok(new PageImpl<ServiceResponse>(Collections.singletonList(content)));
-
-		}
-
-		return ResponseEntity.ok(Page.empty());
+		return ResponseEntity.ok( serviceService.findAll(pageable) );
 
 	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<ServiceResponse> findBy(@PathVariable final Long id) {
 
-		if ( Long.valueOf(1L).equals(id) ) {
-
-			return ResponseEntity.ok().build();
-
-		}
-
-		return ResponseEntity.notFound().build();
+		return ResponseEntity.of( serviceService.findBy(id) );
 
 	}
 
@@ -59,9 +48,11 @@ public class ServiceController {
     public ResponseEntity<ServiceResponse> create(
     	@RequestBody final ServiceRequest request) {
 
-        final URI location = URI.create(format("/services/%d", 1));
+    	final ServiceResponse serviceResponse = serviceService.create(request);
 
-        return ResponseEntity.created(location).build();
+        final URI location = URI.create( format("/services/%s", serviceResponse.getId() ));
+
+        return ResponseEntity.created(location).body(serviceResponse);
 
     }
 
@@ -70,27 +61,15 @@ public class ServiceController {
     	@PathVariable final Long id,
     	@RequestBody final ServiceRequest request) {
 
-		if ( Long.valueOf(1L).equals(id) ) {
-
-			return ResponseEntity.ok().build();
-
-		}
-
-		return ResponseEntity.notFound().build();
+    	return ResponseEntity.of( serviceService.update(id, request) );
 
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBy(@PathVariable final Long id) {
 
-		if ( Long.valueOf(1L).equals(id) ) {
-
-			return ResponseEntity.ok().build();
-
-		}
-
-		return ResponseEntity.notFound().build();
-
+    	return serviceService.delete(id) ?
+        	ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 
 }
