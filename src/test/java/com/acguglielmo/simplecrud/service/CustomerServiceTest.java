@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -15,10 +16,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import com.acguglielmo.simplecrud.entity.Customer;
+import com.acguglielmo.simplecrud.mapper.CustomerMapper;
+import com.acguglielmo.simplecrud.mapper.MapperConfig;
 import com.acguglielmo.simplecrud.repository.CustomerRepository;
 import com.acguglielmo.simplecrud.request.CustomerRequest;
 import com.acguglielmo.simplecrud.response.CustomerResponse;
@@ -26,11 +33,18 @@ import com.acguglielmo.simplecrud.response.CustomerResponse;
 import br.com.six2six.fixturefactory.Fixture;
 import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith({
+	MockitoExtension.class,
+	SpringExtension.class
+})
+@ContextConfiguration(classes = MapperConfig.class)
 public class CustomerServiceTest {
 
 	@Mock
 	private CustomerRepository repository;
+
+	@SpyBean
+	private CustomerMapper mapper;
 
 	@InjectMocks
 	private CustomerService customerService;
@@ -73,6 +87,9 @@ public class CustomerServiceTest {
 	@Test
 	public void shouldReturnOptionalWithCustomerWhenFoundByCnpjTest() {
 
+		when( repository.findById( anyString() ) )
+			.thenReturn( Optional.of( Fixture.from( Customer.class ).gimme( "valid") ) );
+
 		final Optional<CustomerResponse> result = customerService.findBy( "01567964000189" );
 
 		assertThat(result, notNullValue() );
@@ -114,6 +131,9 @@ public class CustomerServiceTest {
 	@Test
 	public void shouldReturnOptionalWithUpdatedCustomerInfoIfCustomerExistsTest() throws Exception {
 
+		when( repository.findById( anyString() ) )
+			.thenReturn( Optional.of( Fixture.from( Customer.class ).gimme( "valid") ) );
+
 		final CustomerRequest request =
 			Fixture.from( CustomerRequest.class ).gimme( "valid");
 
@@ -146,7 +166,10 @@ public class CustomerServiceTest {
 	}
 
 	@Test
-	public void shouldReturnTrueWhenDeletingIfCustomerDoesNotExistTest() throws Exception {
+	public void shouldReturnTrueWhenDeletingIfCustomerExistsTest() throws Exception {
+
+		when( repository.findById( anyString() ) )
+			.thenReturn( Optional.of( Fixture.from( Customer.class ).gimme( "valid") ) );
 
 		boolean result = customerService.delete("01567964000189");
 

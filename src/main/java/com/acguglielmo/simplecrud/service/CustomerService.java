@@ -12,12 +12,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.acguglielmo.simplecrud.entity.Customer;
+import com.acguglielmo.simplecrud.mapper.CustomerMapper;
 import com.acguglielmo.simplecrud.repository.CustomerRepository;
 import com.acguglielmo.simplecrud.request.CustomerRequest;
 import com.acguglielmo.simplecrud.response.CustomerResponse;
 
 @Service
 public class CustomerService {
+
+	@Autowired
+	private CustomerMapper mapper;
 
 	@Autowired
 	private CustomerRepository repository;
@@ -39,16 +43,8 @@ public class CustomerService {
 
 	public Optional<CustomerResponse> findBy(final String cnpj) {
 
-		final Optional<Customer> customer = repository.findById(cnpj);
-
-		return customer.map( e ->
-
-			new CustomerResponse(
-				e.getCnpj(),
-				e.getName(),
-				new HashSet<>() )
-
-		);
+		return repository.findById(cnpj)
+			.map( mapper::fromEntity );
 
 	}
 
