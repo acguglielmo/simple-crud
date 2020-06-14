@@ -6,20 +6,22 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.ManyToOne;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @Data
 @Embeddable
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 public class ContractId implements Serializable {
 
 	private static final long serialVersionUID = -8401112530595544304L;
 
 	@Column(name = "NU_CONTRACT")
-    public final String number;
+    public String number;
 
     @ManyToOne
-    public final Customer customer;
+    public Customer customer;
 
 }
