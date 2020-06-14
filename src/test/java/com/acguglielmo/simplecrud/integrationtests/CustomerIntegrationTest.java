@@ -22,7 +22,7 @@ public class CustomerIntegrationTest extends AbstractIntegrationTest {
     private static final String CUSTOMERS_RESOURCE_URI = CUSTOMERS_BASE_URI + "/{id}";
 
 	@Test
-	public void shouldCreateNewCustomerTest() throws Exception {
+	public void shouldPerformCrudActionsAccordingToAssertionsTest() throws Exception {
 
 		final CustomerResponse customer = create();
 
