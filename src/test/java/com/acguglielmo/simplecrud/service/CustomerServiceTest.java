@@ -101,4 +101,37 @@ public class CustomerServiceTest {
 
 	}
 
+	@Test
+	public void shouldReturnOptionalWithUpdatedCustomerInfoIfCustomerExistsTest() throws Exception {
+
+		final CustomerRequest request =
+			Fixture.from( CustomerRequest.class ).gimme( "valid");
+
+		final Optional<CustomerResponse> result =
+			customerService.update( "01567964000189", request );
+
+		assertThat(result, notNullValue() );
+
+		assertThat(result.isPresent(), is(true) );
+
+		assertThat(result.get().getCnpj(), is( request.getCnpj() ) );
+
+		assertThat(result.get().getName(), is( request.getName() ) );
+
+	}
+
+	@Test
+	public void shouldReturnOptionalEmptyIfCustomerDoesNotExistTest() throws Exception {
+
+		final CustomerRequest request =
+			Fixture.from( CustomerRequest.class ).gimme( "valid");
+
+		final Optional<CustomerResponse> result =
+			customerService.update( "000000000", request );
+
+		assertThat(result, notNullValue() );
+
+		assertThat(result.isPresent(), is(false) );
+
+	}
 }

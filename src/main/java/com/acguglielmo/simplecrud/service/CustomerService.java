@@ -57,4 +57,16 @@ public class CustomerService {
 
 	}
 
+	public Optional<CustomerResponse> update( final String cnpj, final CustomerRequest customer) {
+
+		return findBy( cnpj )
+			.map( e ->
+				new CustomerResponse(
+					customer.getCnpj(),
+					customer.getName(),
+					new HashSet<>() )
+
+			);
+	}
+
 }
