@@ -60,7 +60,7 @@ public class CustomerServiceTest {
 	@Test
 	public void shouldReturnPageWithCustomersTest() {
 
-		when( repository.findAllByActiveTrue( any() ) )
+		when( repository.findAll( any(Pageable.class) ) )
 			.thenReturn( new PageImpl<>( Fixture.from( Customer.class ).gimme(1, "valid") ) );
 
 		final Pageable pageable = PageRequest.of(0, 10);
@@ -78,7 +78,7 @@ public class CustomerServiceTest {
 	@Test
 	public void shouldReturnEmptyPageTest() {
 
-		when( repository.findAllByActiveTrue( any() ) )
+		when( repository.findAll( any(Pageable.class) ) )
 			.thenReturn( Page.empty() );
 
 		final Pageable pageable = PageRequest.of(1, 10);
@@ -94,7 +94,7 @@ public class CustomerServiceTest {
 	@Test
 	public void shouldReturnOptionalWithCustomerWhenFoundByCnpjTest() {
 
-		when( repository.findByCnpjAndActiveTrue( anyString() ) )
+		when( repository.findById( anyString() ) )
 			.thenReturn( Optional.of( Fixture.from( Customer.class ).gimme( "valid") ) );
 
 		final Optional<CustomerResponse> result = customerService.findBy( "01567964000189" );
@@ -140,7 +140,7 @@ public class CustomerServiceTest {
 
 		final Customer oldCustomer = Fixture.from( Customer.class ).gimme( "valid");
 
-		when( repository.findByCnpjAndActiveTrue( anyString() ) )
+		when( repository.findById( anyString() ) )
 			.thenReturn( Optional.of( oldCustomer ) );
 
 		when( repository.save(any()) )
@@ -180,7 +180,7 @@ public class CustomerServiceTest {
 	@Test
 	public void shouldReturnTrueWhenDeletingIfCustomerExistsTest() throws Exception {
 
-		when( repository.findByCnpjAndActiveTrue( anyString() ) )
+		when( repository.findById( anyString() ) )
 			.thenReturn( Optional.of( Fixture.from( Customer.class ).gimme( "valid") ) );
 
 		boolean result = customerService.delete("01567964000189");

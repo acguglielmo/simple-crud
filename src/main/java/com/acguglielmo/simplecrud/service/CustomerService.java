@@ -24,7 +24,7 @@ public class CustomerService {
 
 	public Page<CustomerResponse> findAll(final Pageable pageable) {
 
-		return repository.findAllByActiveTrue(pageable)
+		return repository.findAll(pageable)
 			.map( mapper::fromEntity ) ;
 
 	}
@@ -58,12 +58,12 @@ public class CustomerService {
 
 	}
 
-	public boolean delete( final String cnpj) {
+	public boolean delete(final String cnpj) {
 
 		return findEntity( cnpj )
 			.map(e -> {
 
-				repository.save( e.inactivate() );
+				repository.delete( e );
 
 				return true;
 
@@ -74,7 +74,7 @@ public class CustomerService {
 
 	private Optional<Customer> findEntity(final String cnpj) {
 
-		return repository.findByCnpjAndActiveTrue(cnpj);
+		return repository.findById(cnpj);
 
 	}
 
