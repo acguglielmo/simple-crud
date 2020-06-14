@@ -121,17 +121,23 @@ public class CustomerControllerTest extends AbstractControllerTest {
     @Test
     public void shouldReturnHttp200OkWhenCustomerIsDeletedSucessfullyTest() throws Exception {
 
-        mockMvc.perform( delete(CUSTOMERS_RESOURCE_URI, 1))
-        	.andExpect(status().isOk())
-        	.andDo( document("DELETE-200") );
+    	when( customerService.delete("123456789") ).thenReturn(true);
+
+        mockMvc.perform( delete(CUSTOMERS_RESOURCE_URI, "123456789"))
+        	.andExpect( status().isNoContent() )
+        	.andExpect( jsonPath("$").doesNotExist() )
+        	.andDo( document("DELETE-204") );
 
     }
 
     @Test
     public void shouldReturnHttp404NotFoundWhenCustomerIsNotFoundForDeletionTest() throws Exception {
 
-        mockMvc.perform( delete(CUSTOMERS_RESOURCE_URI, 2))
+    	when( customerService.delete("123456789") ).thenReturn(false);
+
+        mockMvc.perform( delete(CUSTOMERS_RESOURCE_URI, "123456789"))
         	.andExpect(status().isNotFound())
+        	.andExpect( jsonPath("$").doesNotExist() )
         	.andDo( document("DELETE-404") );
 
     }
