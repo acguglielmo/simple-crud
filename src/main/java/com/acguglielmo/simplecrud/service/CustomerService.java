@@ -31,7 +31,7 @@ public class CustomerService {
 
 	public Optional<CustomerResponse> findBy(final String cnpj) {
 
-		return findEntity( cnpj )
+		return repository.findById(cnpj)
 			.map( mapper::fromEntity );
 
 	}
@@ -46,7 +46,7 @@ public class CustomerService {
 
 	public Optional<CustomerResponse> update( final String cnpj, final CustomerRequest customer) {
 
-		return findEntity( cnpj )
+		return repository.findById(cnpj)
 			.map( e ->
 				{
 					e.setName( customer.getName() );
@@ -60,7 +60,7 @@ public class CustomerService {
 
 	public boolean delete(final String cnpj) {
 
-		return findEntity( cnpj )
+		return repository.findById(cnpj)
 			.map(e -> {
 
 				repository.delete( e );
@@ -69,12 +69,6 @@ public class CustomerService {
 
 			})
 			.orElse( false );
-
-	}
-
-	private Optional<Customer> findEntity(final String cnpj) {
-
-		return repository.findById(cnpj);
 
 	}
 
