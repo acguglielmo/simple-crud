@@ -72,8 +72,14 @@ public class CustomerService {
 
 	public boolean delete( final String cnpj) {
 
-		return findBy( cnpj )
-			.map(e -> true)
+		return findEntity( cnpj )
+			.map(e -> {
+
+				repository.delete(e);
+
+				return true;
+
+			})
 			.orElse( false );
 
 	}

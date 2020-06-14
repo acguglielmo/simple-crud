@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.acguglielmo.simplecrud.request.CustomerRequest;
 import com.acguglielmo.simplecrud.response.CustomerResponse;
@@ -25,13 +26,25 @@ public class CustomerIntegrationTest extends AbstractIntegrationTest {
 
 		final CustomerResponse customer = create();
 
-		find(customer);
+		shouldFind(customer);
 
 		update(customer);
 
+		delete(customer);
+
+		shouldNotFind(customer);
+
 	}
 
-	private void find(final CustomerResponse customer) throws Exception {
+	private void shouldNotFind(final CustomerResponse customer) throws Exception {
+
+        mockMvc.perform( get(CUSTOMERS_RESOURCE_URI, customer.getCnpj() ) )
+	        .andExpect( status().isNotFound() )
+	        .andExpect( jsonPath("$").doesNotExist() );
+
+	}
+
+	private void shouldFind(final CustomerResponse customer) throws Exception {
 
         mockMvc.perform( get(CUSTOMERS_RESOURCE_URI, customer.getCnpj() ) )
 	        .andExpect( status().isOk() )
@@ -69,4 +82,13 @@ public class CustomerIntegrationTest extends AbstractIntegrationTest {
 	    	.andExpect( jsonPath("$.name").value( request.getName() ) );
 
 	}
+
+	private void delete(final CustomerResponse customer) throws Exception {
+
+        mockMvc.perform( MockMvcRequestBuilders.delete(CUSTOMERS_RESOURCE_URI, customer.getCnpj() ))
+	    	.andExpect( status().isNoContent() )
+	    	.andExpect( jsonPath("$").doesNotExist() );
+
+	}
+
 }
