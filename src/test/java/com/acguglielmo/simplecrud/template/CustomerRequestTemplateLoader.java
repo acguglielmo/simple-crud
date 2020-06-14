@@ -16,6 +16,16 @@ public class CustomerRequestTemplateLoader implements TemplateLoader {
 			add("name", "customer");
 		}});
 
+		Fixture.of( CustomerRequest.class ).addTemplate("updating", new Rule() {{
+			add("cnpj", "123456789");
+			add("name", "updated name");
+		}});
+
+		Fixture.of( CustomerRequest.class ).addTemplate("random info", new Rule() {{
+			add("cnpj", cnpj() );
+			add("name", uniqueRandom("customer A", "customer B", "customer C", "customer D") );
+		}});
+
 	}
 
 }

@@ -119,7 +119,7 @@ public class CustomerControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void shouldReturnHttp200OkWhenCustomerIsDeletedSucessfullyTest() throws Exception {
+    public void shouldReturnHttp204OkWhenCustomerIsDeletedSucessfullyTest() throws Exception {
 
     	when( customerService.delete("123456789") ).thenReturn(true);
 
