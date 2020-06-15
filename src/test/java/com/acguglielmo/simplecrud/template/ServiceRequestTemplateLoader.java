@@ -15,6 +15,14 @@ public class ServiceRequestTemplateLoader implements TemplateLoader {
 			add("name", "service");
 		}});
 
+		Fixture.of( ServiceRequest.class ).addTemplate("updating", new Rule() {{
+			add("name", "updated service name");
+		}});
+
+		Fixture.of( ServiceRequest.class ).addTemplate("random info", new Rule() {{
+			add("name", uniqueRandom("service A", "service B", "service C", "service D") );
+		}});
+
 	}
 
 }

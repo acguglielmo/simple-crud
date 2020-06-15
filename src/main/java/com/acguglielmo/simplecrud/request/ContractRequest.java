@@ -7,4 +7,6 @@ public class ContractRequest {
 
 	private Long serviceId;
 
+	private String customerCnpj;
+
 }

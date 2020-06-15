@@ -116,11 +116,11 @@ include::{snippets}/services/PUT-404/http-response.adoc[]
 
 === DELETE
 .request
-include::{snippets}/services/DELETE-200/http-request.adoc[]
+include::{snippets}/services/DELETE-204/http-request.adoc[]
 
 ==== Service deleted sucessfully
 .response
-include::{snippets}/services/DELETE-200/http-response.adoc[]
+include::{snippets}/services/DELETE-204/http-response.adoc[]
 
 ==== Service not found for deletion
 .response

@@ -5,7 +5,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -24,12 +24,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.acguglielmo.simplecrud.entity.Customer;
-import com.acguglielmo.simplecrud.mapper.CustomerMapper;
+import com.acguglielmo.simplecrud.entity.Service;
 import com.acguglielmo.simplecrud.mapper.MapperConfig;
-import com.acguglielmo.simplecrud.repository.CustomerRepository;
-import com.acguglielmo.simplecrud.request.CustomerRequest;
-import com.acguglielmo.simplecrud.response.CustomerResponse;
+import com.acguglielmo.simplecrud.mapper.ServiceMapper;
+import com.acguglielmo.simplecrud.repository.ServiceRepository;
+import com.acguglielmo.simplecrud.request.ServiceRequest;
+import com.acguglielmo.simplecrud.response.ServiceResponse;
 
 import br.com.six2six.fixturefactory.Fixture;
 import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader;
@@ -39,16 +39,16 @@ import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader;
 	SpringExtension.class
 })
 @ContextConfiguration(classes = MapperConfig.class)
-public class CustomerServiceTest {
+public class ServiceServiceTest {
 
 	@Mock
-	private CustomerRepository repository;
+	private ServiceRepository repository;
 
 	@SpyBean
-	private CustomerMapper mapper;
+	private ServiceMapper mapper;
 
 	@InjectMocks
-	private CustomerService customerService;
+	private ServiceService serviceService;
 
 	@BeforeEach
 	public void beforeEach() {
@@ -58,14 +58,14 @@ public class CustomerServiceTest {
 	}
 
 	@Test
-	public void shouldReturnPageWithCustomersTest() {
+	public void shouldReturnPageWithServicesTest() {
 
 		when( repository.findAll( any(Pageable.class) ) )
-			.thenReturn( new PageImpl<>( Fixture.from( Customer.class ).gimme(1, "valid") ) );
+			.thenReturn( new PageImpl<>( Fixture.from( Service.class ).gimme(1, "valid") ) );
 
 		final Pageable pageable = PageRequest.of(0, 10);
 
-		final Page<CustomerResponse> result = customerService.findAll(pageable);
+		final Page<ServiceResponse> result = serviceService.findAll(pageable);
 
 		assertThat(result, notNullValue() );
 
@@ -83,7 +83,7 @@ public class CustomerServiceTest {
 
 		final Pageable pageable = PageRequest.of(1, 10);
 
-		final Page<CustomerResponse> result = customerService.findAll(pageable);
+		final Page<ServiceResponse> result = serviceService.findAll(pageable);
 
 		assertThat(result, notNullValue() );
 
@@ -92,12 +92,12 @@ public class CustomerServiceTest {
 	}
 
 	@Test
-	public void shouldReturnOptionalWithCustomerWhenFoundByCnpjTest() {
+	public void shouldReturnOptionalWithServiceWhenFoundByCnpjTest() {
 
-		when( repository.findById( anyString() ) )
-			.thenReturn( Optional.of( Fixture.from( Customer.class ).gimme( "valid") ) );
+		when( repository.findById( anyLong() ) )
+			.thenReturn( Optional.of( Fixture.from( Service.class ).gimme( "valid") ) );
 
-		final Optional<CustomerResponse> result = customerService.findBy( "01567964000189" );
+		final Optional<ServiceResponse> result = serviceService.findBy( 32L );
 
 		assertThat(result, notNullValue() );
 
@@ -108,7 +108,7 @@ public class CustomerServiceTest {
 	@Test
 	public void shouldReturnOptionalEmptyWhenNotFoundByCnpjTest() {
 
-		final Optional<CustomerResponse> result = customerService.findBy( "000000000000" );
+		final Optional<ServiceResponse> result = serviceService.findBy( 55L );
 
 		assertThat(result, notNullValue() );
 
@@ -117,59 +117,57 @@ public class CustomerServiceTest {
 	}
 
 	@Test
-	public void shouldCreateNewCustomerSucessfullyTest() throws Exception {
+	public void shouldCreateNewServiceSucessfullyTest() throws Exception {
 
-		final CustomerRequest customer =
-			Fixture.from( CustomerRequest.class ).gimme("valid");
+		final ServiceRequest service =
+			Fixture.from( ServiceRequest.class ).gimme("valid");
 
 		when( repository.save(any()) )
 			.thenAnswer( e -> e.getArgument(0) );
 
-		final CustomerResponse result = customerService.create(customer);
+		final ServiceResponse result = serviceService.create(service);
 
 		assertThat(result, notNullValue() );
 
-		assertThat(result.getCnpj(), equalTo( customer.getCnpj() ) );
-
-		assertThat(result.getName(), equalTo( customer.getName() ) );
+		assertThat(result.getName(), equalTo( service.getName() ) );
 
 	}
 
 	@Test
-	public void shouldReturnOptionalWithUpdatedCustomerInfoIfCustomerExistsTest() throws Exception {
+	public void shouldReturnOptionalWithUpdatedServiceInfoIfServiceExistsTest() throws Exception {
 
-		final Customer oldCustomer = Fixture.from( Customer.class ).gimme( "valid");
+		final Service oldService = Fixture.from( Service.class ).gimme( "valid");
 
-		when( repository.findById( anyString() ) )
-			.thenReturn( Optional.of( oldCustomer ) );
+		when( repository.findById( anyLong() ) )
+			.thenReturn( Optional.of( oldService ) );
 
 		when( repository.save(any()) )
 			.thenAnswer( e -> e.getArgument(0) );
 
-		final CustomerRequest request =
-			Fixture.from( CustomerRequest.class ).gimme( "valid");
+		final ServiceRequest request =
+			Fixture.from( ServiceRequest.class ).gimme( "valid");
 
-		final Optional<CustomerResponse> result =
-			customerService.update( "01567964000189", request );
+		final Optional<ServiceResponse> result =
+			serviceService.update( 50L, request );
 
 		assertThat(result, notNullValue() );
 
 		assertThat(result.isPresent(), is(true) );
 
-		assertThat(result.get().getCnpj(), is( oldCustomer.getCnpj() ) );
+		assertThat(result.get().getId(), is( oldService.getId() ) );
 
 		assertThat(result.get().getName(), is( request.getName() ) );
 
 	}
 
 	@Test
-	public void shouldReturnOptionalEmptyWhenUpdatingIfCustomerDoesNotExistTest() throws Exception {
+	public void shouldReturnOptionalEmptyWhenUpdatingIfServiceDoesNotExistTest() throws Exception {
 
-		final CustomerRequest request =
-			Fixture.from( CustomerRequest.class ).gimme( "valid");
+		final ServiceRequest request =
+			Fixture.from( ServiceRequest.class ).gimme( "valid");
 
-		final Optional<CustomerResponse> result =
-			customerService.update( "000000000", request );
+		final Optional<ServiceResponse> result =
+			serviceService.update( 78L, request );
 
 		assertThat(result, notNullValue() );
 
@@ -178,21 +176,21 @@ public class CustomerServiceTest {
 	}
 
 	@Test
-	public void shouldReturnTrueWhenDeletingIfCustomerExistsTest() throws Exception {
+	public void shouldReturnTrueWhenDeletingIfServiceExistsTest() throws Exception {
 
-		when( repository.findById( anyString() ) )
-			.thenReturn( Optional.of( Fixture.from( Customer.class ).gimme( "valid") ) );
+		when( repository.findById( anyLong() ) )
+			.thenReturn( Optional.of( Fixture.from( Service.class ).gimme( "valid") ) );
 
-		boolean result = customerService.delete("01567964000189");
+		boolean result = serviceService.delete(5L);
 
 		assertThat(result, is(true) );
 
 	}
 
 	@Test
-	public void shouldReturnFalseWhenDeletingIfCustomerDoesNotExistTest() throws Exception {
+	public void shouldReturnFalseWhenDeletingIfServiceDoesNotExistTest() throws Exception {
 
-		boolean result = customerService.delete("000000000");
+		boolean result = serviceService.delete(78L);
 
 		assertThat(result, is(false) );
 

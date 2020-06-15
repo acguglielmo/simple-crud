@@ -1,8 +1,14 @@
 package com.acguglielmo.simplecrud.response;
 
-import lombok.Setter;
+import lombok.Data;
 
-@Setter
+@Data
 public class ContractResponse {
+
+	private String number;
+
+	private CustomerResponse customer;
+
+	private ServiceResponse service;
 
 }
