@@ -1,7 +1,6 @@
 package com.acguglielmo.simplecrud.integrationtests;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -37,7 +36,7 @@ public class ServiceIntegrationTest extends AbstractIntegrationTest {
 	@Test
 	public void shouldPerformCrudActionsAccordingToAssertionsTest() throws Exception {
 
-		final ServiceResponse service = create("valid");
+		final ServiceResponse service = super.create("valid");
 
 		shouldFind(service);
 
@@ -73,23 +72,6 @@ public class ServiceIntegrationTest extends AbstractIntegrationTest {
 
 	}
 
-	@Override
-	protected ServiceResponse create(final String fixtureName) throws Exception {
-
-		final ServiceRequest request = Fixture.from(ServiceRequest.class).gimme(fixtureName);
-
-        final String contentAsString = mockMvc.perform( post( SERVICES_BASE_URI )
-	    		.contentType( MediaType.APPLICATION_JSON )
-	    		.content( mapper.writeValueAsString(request) )
-	    	).andExpect(status().isCreated())
-	        .andReturn()
-	        .getResponse()
-	        .getContentAsString();
-
-        return mapper.readValue(contentAsString, ServiceResponse.class);
-
-	}
-
 	private void update(final ServiceResponse service) throws Exception {
 
 		final ServiceRequest request = Fixture.from(ServiceRequest.class).gimme("updating");
@@ -110,6 +92,33 @@ public class ServiceIntegrationTest extends AbstractIntegrationTest {
 	    	.andExpect( status().isNoContent() )
 	    	.andExpect( jsonPath("$").doesNotExist() );
 
+	}
+
+	@Override
+	protected String getBaseUri() {
+
+		return SERVICES_BASE_URI;
+	}
+
+	@Override
+	protected String getResourceUri() {
+
+		return SERVICES_RESOURCE_URI;
+
+	}
+
+
+	@Override
+	protected Class<ServiceResponse> getResponseClass() {
+
+		return ServiceResponse.class;
+
+	}
+
+	@Override
+	protected Class<ServiceRequest> getRequestClass() {
+
+		return ServiceRequest.class;
 	}
 
 }

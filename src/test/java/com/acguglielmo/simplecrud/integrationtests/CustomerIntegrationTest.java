@@ -1,7 +1,6 @@
 package com.acguglielmo.simplecrud.integrationtests;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -37,7 +36,7 @@ public class CustomerIntegrationTest extends AbstractIntegrationTest {
 	@Test
 	public void shouldPerformCrudActionsAccordingToAssertionsTest() throws Exception {
 
-		final CustomerResponse customer = create("valid");
+		final CustomerResponse customer = super.create("valid");
 
 		shouldFind(customer);
 
@@ -73,23 +72,6 @@ public class CustomerIntegrationTest extends AbstractIntegrationTest {
 
 	}
 
-	@Override
-	protected CustomerResponse create(final String fixtureName) throws Exception {
-
-		final CustomerRequest request = Fixture.from(CustomerRequest.class).gimme(fixtureName);
-
-        final String contentAsString = mockMvc.perform( post( CUSTOMERS_BASE_URI )
-	    		.contentType( MediaType.APPLICATION_JSON )
-	    		.content( mapper.writeValueAsString(request) )
-	    	).andExpect(status().isCreated())
-	        .andReturn()
-	        .getResponse()
-	        .getContentAsString();
-
-        return mapper.readValue(contentAsString, CustomerResponse.class);
-
-	}
-
 	private void update(final CustomerResponse customer) throws Exception {
 
 		final CustomerRequest request = Fixture.from(CustomerRequest.class).gimme("updating");
@@ -110,6 +92,33 @@ public class CustomerIntegrationTest extends AbstractIntegrationTest {
 	    	.andExpect( status().isNoContent() )
 	    	.andExpect( jsonPath("$").doesNotExist() );
 
+	}
+
+	@Override
+	protected String getBaseUri() {
+
+		return CUSTOMERS_BASE_URI;
+	}
+
+	@Override
+	protected String getResourceUri() {
+
+		return CUSTOMERS_RESOURCE_URI;
+
+	}
+
+
+	@Override
+	protected Class<CustomerResponse> getResponseClass() {
+
+		return CustomerResponse.class;
+
+	}
+
+	@Override
+	protected Class<CustomerRequest> getRequestClass() {
+
+		return CustomerRequest.class;
 	}
 
 }
