@@ -14,10 +14,6 @@ import com.acguglielmo.simplecrud.response.CustomerResponse;
 
 public class CustomerIntegrationTest extends AbstractIntegrationTest<CustomerRequest, CustomerResponse> {
 
-    private static final String CUSTOMERS_BASE_URI = "/customers";
-
-    private static final String CUSTOMERS_RESOURCE_URI = CUSTOMERS_BASE_URI + "/{id}";
-
     @Autowired
     private CustomerRepository repository;
 
@@ -44,22 +40,23 @@ public class CustomerIntegrationTest extends AbstractIntegrationTest<CustomerReq
 	}
 
 	@Test
+	@Override
 	public void shouldPerformPaginatedQueryUsingGetTest() throws Exception {
 
-		super.shouldPerformPaginatedQueryUsingGetTest( CUSTOMERS_BASE_URI );
+		super.shouldPerformPaginatedQueryUsingGetTest();
 
 	}
 
 	@Override
 	protected String getBaseUri() {
 
-		return CUSTOMERS_BASE_URI;
+		return "/customers";
 	}
 
 	@Override
 	protected String getResourceUri() {
 
-		return CUSTOMERS_RESOURCE_URI;
+		return getBaseUri() + "/{id}";
 
 	}
 

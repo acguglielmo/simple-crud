@@ -14,10 +14,6 @@ import com.acguglielmo.simplecrud.response.ServiceResponse;
 
 public class ServiceIntegrationTest extends AbstractIntegrationTest<ServiceRequest, ServiceResponse> {
 
-    private static final String SERVICES_BASE_URI = "/services";
-
-    private static final String SERVICES_RESOURCE_URI = SERVICES_BASE_URI + "/{id}";
-
     @Autowired
     private ServiceRepository repository;
 
@@ -44,22 +40,23 @@ public class ServiceIntegrationTest extends AbstractIntegrationTest<ServiceReque
 	}
 
 	@Test
+	@Override
 	public void shouldPerformPaginatedQueryUsingGetTest() throws Exception {
 
-		super.shouldPerformPaginatedQueryUsingGetTest( SERVICES_BASE_URI );
+		super.shouldPerformPaginatedQueryUsingGetTest();
 
 	}
 
 	@Override
 	protected String getBaseUri() {
 
-		return SERVICES_BASE_URI;
+		return "/services";
 	}
 
 	@Override
 	protected String getResourceUri() {
 
-		return SERVICES_RESOURCE_URI;
+		return getBaseUri() + "/{id}";
 
 	}
 

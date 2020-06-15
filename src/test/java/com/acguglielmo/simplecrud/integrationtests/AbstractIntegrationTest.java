@@ -47,9 +47,9 @@ public abstract class AbstractIntegrationTest<T, Y> {
 
     }
 
-    protected void shouldPerformPaginatedQueryUsingGetTest(final String path) throws Exception {
+    protected void shouldPerformPaginatedQueryUsingGetTest() throws Exception {
 
-		mockMvc.perform( get(path) )
+		mockMvc.perform( get( getBaseUri() ) )
 			.andExpect( status().isOk() )
 			.andExpect( jsonPath("$").exists() )
 			.andExpect( jsonPath("$.totalElements").value(0) )
@@ -62,7 +62,7 @@ public abstract class AbstractIntegrationTest<T, Y> {
 
 		}
 
-		mockMvc.perform( get(path) )
+		mockMvc.perform( get( getBaseUri() ) )
 			.andExpect( status().isOk() )
 			.andExpect( jsonPath("$").exists() )
 			.andExpect( jsonPath("$.totalElements").value(19) )
@@ -70,7 +70,7 @@ public abstract class AbstractIntegrationTest<T, Y> {
 			.andExpect( jsonPath("$.content", is( not( empty() ) ) ) )
 			.andExpect( jsonPath("$.content.size()").value(10) );
 
-		mockMvc.perform( get(path).queryParam("page", "1") )
+		mockMvc.perform( get( getBaseUri() ).queryParam("page", "1") )
 			.andExpect( status().isOk() )
 			.andExpect( jsonPath("$").exists() )
 			.andExpect( jsonPath("$.totalElements").value(19) )
@@ -78,14 +78,14 @@ public abstract class AbstractIntegrationTest<T, Y> {
 			.andExpect( jsonPath("$.content", is( not( empty() ) ) ) )
 			.andExpect( jsonPath("$.content.size()").value(9) );
 
-		mockMvc.perform( get(path).queryParam("page", "2") )
+		mockMvc.perform( get( getBaseUri() ).queryParam("page", "2") )
 			.andExpect( status().isOk() )
 			.andExpect( jsonPath("$").exists() )
 			.andExpect( jsonPath("$.totalElements").value(19) )
 			.andExpect( jsonPath("$.content").exists() )
 			.andExpect( jsonPath("$.content", is( empty()  ) ) );
 
-		mockMvc.perform( get(path).queryParam("page", "0").queryParam("size", "5") )
+		mockMvc.perform( get( getBaseUri() ).queryParam("page", "0").queryParam("size", "5") )
 			.andExpect( status().isOk() )
 			.andExpect( jsonPath("$").exists() )
 			.andExpect( jsonPath("$.totalElements").value(19) )
