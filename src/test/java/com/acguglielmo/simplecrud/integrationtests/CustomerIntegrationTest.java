@@ -1,8 +1,5 @@
 package com.acguglielmo.simplecrud.integrationtests;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.empty;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -55,48 +52,7 @@ public class CustomerIntegrationTest extends AbstractIntegrationTest {
 	@Test
 	public void shouldPerformPaginatedQueryUsingGetTest() throws Exception {
 
-		mockMvc.perform( get(CUSTOMERS_BASE_URI) )
-			.andExpect( status().isOk() )
-			.andExpect( jsonPath("$").exists() )
-			.andExpect( jsonPath("$.totalElements").value(0) )
-			.andExpect( jsonPath("$.content").exists() )
-			.andExpect( jsonPath("$.content", is( empty() )) );
-
-		for (int i = 0; i < 19; i++ ) {
-
-			create("random info");
-
-		}
-
-		mockMvc.perform( get(CUSTOMERS_BASE_URI) )
-			.andExpect( status().isOk() )
-			.andExpect( jsonPath("$").exists() )
-			.andExpect( jsonPath("$.totalElements").value(19) )
-			.andExpect( jsonPath("$.content").exists() )
-			.andExpect( jsonPath("$.content", is( not( empty() ) ) ) )
-			.andExpect( jsonPath("$.content.size()").value(10) );
-
-		mockMvc.perform( get(CUSTOMERS_BASE_URI).queryParam("page", "1") )
-			.andExpect( status().isOk() )
-			.andExpect( jsonPath("$").exists() )
-			.andExpect( jsonPath("$.totalElements").value(19) )
-			.andExpect( jsonPath("$.content").exists() )
-			.andExpect( jsonPath("$.content", is( not( empty() ) ) ) )
-			.andExpect( jsonPath("$.content.size()").value(9) );
-
-		mockMvc.perform( get(CUSTOMERS_BASE_URI).queryParam("page", "2") )
-			.andExpect( status().isOk() )
-			.andExpect( jsonPath("$").exists() )
-			.andExpect( jsonPath("$.totalElements").value(19) )
-			.andExpect( jsonPath("$.content").exists() )
-			.andExpect( jsonPath("$.content", is( empty()  ) ) );
-
-		mockMvc.perform( get(CUSTOMERS_BASE_URI).queryParam("page", "0").queryParam("size", "5") )
-			.andExpect( status().isOk() )
-			.andExpect( jsonPath("$").exists() )
-			.andExpect( jsonPath("$.totalElements").value(19) )
-			.andExpect( jsonPath("$.content", is( not( empty() ) ) ) )
-			.andExpect( jsonPath("$.content.size()").value(5) );
+		super.shouldPerformPaginatedQueryUsingGetTest( CUSTOMERS_BASE_URI );
 
 	}
 
@@ -117,7 +73,8 @@ public class CustomerIntegrationTest extends AbstractIntegrationTest {
 
 	}
 
-	private CustomerResponse create(final String fixtureName) throws Exception {
+	@Override
+	protected CustomerResponse create(final String fixtureName) throws Exception {
 
 		final CustomerRequest request = Fixture.from(CustomerRequest.class).gimme(fixtureName);
 
