@@ -4,7 +4,7 @@ This is an example output for a service running at http://localhost:8080:
 
 == Customers
 
-=== GET /{cnpj}
+=== GET /customers/{cnpj}
 .request
 include::{snippets}/customers/GET-by-id-200/http-request.adoc[]
 
@@ -18,7 +18,7 @@ include::{snippets}/customers/GET-by-id-404/http-response.adoc[]
 
 
 
-=== GET with pagination
+=== GET /customers
 .request
 include::{snippets}/customers/paginated-GET-200-returning-itens/http-request.adoc[]
 
@@ -31,7 +31,7 @@ include::{snippets}/customers/paginated-GET-200-returning-itens/http-response.ad
 include::{snippets}/customers/paginated-GET-200-returning-no-itens/http-response.adoc[]
 
 
-=== POST
+=== POST /customers/
 .request
 include::{snippets}/customers/POST-201/http-request.adoc[]
 
@@ -39,7 +39,7 @@ include::{snippets}/customers/POST-201/http-request.adoc[]
 include::{snippets}/customers/POST-201/http-response.adoc[]
 
 
-=== PUT /{cnpj}
+=== PUT /customers/{cnpj}
 .request
 include::{snippets}/customers/PUT-200/http-request.adoc[]
 
@@ -51,7 +51,7 @@ include::{snippets}/customers/PUT-200/http-response.adoc[]
 .response
 include::{snippets}/customers/PUT-404/http-response.adoc[]
 
-=== DELETE /{cnpj}
+=== DELETE /customers/{cnpj}
 .request
 include::{snippets}/customers/DELETE-204/http-request.adoc[]
 
@@ -65,7 +65,7 @@ include::{snippets}/customers/DELETE-404/http-response.adoc[]
 
 == Customer's contracts
 
-=== GET /{cnpj}/contracts/{number}
+=== GET /customers/{cnpj}/contracts/{number}
 .request
 include::{snippets}/customers/GET-contract-by-cnpj-and-number-200/http-request.adoc[]
 
@@ -77,10 +77,35 @@ include::{snippets}/customers/GET-contract-by-cnpj-and-number-200/http-response.
 .response
 include::{snippets}/customers/GET-contract-by-cnpj-and-number-404/http-response.adoc[]
 
+=== PUT /customers/{cnpj}/contracts/{number}
+.request
+include::{snippets}/customers/PUT-contract-200/http-request.adoc[]
+
+==== Contract updated successfully
+.response
+include::{snippets}/customers/PUT-contract-200/http-response.adoc[]
+
+==== Contract not found for update
+.response
+include::{snippets}/customers/PUT-contract-404/http-response.adoc[]
+
+=== DELETE /customers/{cnpj}/contracts/{number}
+.request
+include::{snippets}/customers/DELETE-contract-200/http-request.adoc[]
+
+==== Contract deleted sucessfully
+.response
+include::{snippets}/customers/DELETE-contract-204/http-response.adoc[]
+
+==== Contract not found for deletion
+.response
+include::{snippets}/customers/DELETE-contract-404/http-response.adoc[]
+
+
 
 == Services
 
-=== GET /{id}
+=== GET /services/{id}
 .request
 include::{snippets}/services/GET-by-id-200/http-request.adoc[]
 
@@ -93,8 +118,7 @@ include::{snippets}/services/GET-by-id-200/http-response.adoc[]
 include::{snippets}/services/GET-by-id-404/http-response.adoc[]
 
 
-
-=== GET with pagination
+=== GET /services
 .request
 include::{snippets}/services/paginated-GET-200-returning-itens/http-request.adoc[]
 
@@ -107,7 +131,7 @@ include::{snippets}/services/paginated-GET-200-returning-itens/http-response.ado
 include::{snippets}/services/paginated-GET-200-returning-no-itens/http-response.adoc[]
 
 
-=== POST
+=== POST /services
 .request
 include::{snippets}/services/POST-201/http-request.adoc[]
 
@@ -115,7 +139,7 @@ include::{snippets}/services/POST-201/http-request.adoc[]
 include::{snippets}/services/POST-201/http-response.adoc[]
 
 
-=== PUT
+=== PUT /services/{id}
 .request
 include::{snippets}/services/PUT-200/http-request.adoc[]
 
@@ -127,7 +151,7 @@ include::{snippets}/services/PUT-200/http-response.adoc[]
 .response
 include::{snippets}/services/PUT-404/http-response.adoc[]
 
-=== DELETE
+=== DELETE /services/{id}
 .request
 include::{snippets}/services/DELETE-204/http-request.adoc[]
 
@@ -143,7 +167,7 @@ include::{snippets}/services/DELETE-404/http-response.adoc[]
 
 == Contracts
 
-=== GET with pagination
+=== GET /contracts
 .request
 include::{snippets}/contracts/paginated-GET-200-returning-itens/http-request.adoc[]
 
@@ -156,34 +180,10 @@ include::{snippets}/contracts/paginated-GET-200-returning-itens/http-response.ad
 include::{snippets}/contracts/paginated-GET-200-returning-no-itens/http-response.adoc[]
 
 
-=== POST
+=== POST /contracts
 .request
 include::{snippets}/contracts/POST-201/http-request.adoc[]
 
 .response
 include::{snippets}/contracts/POST-201/http-response.adoc[]
 
-
-=== PUT
-.request
-include::{snippets}/contracts/PUT-200/http-request.adoc[]
-
-==== Contract updated successfully
-.response
-include::{snippets}/contracts/PUT-200/http-response.adoc[]
-
-==== Contract not found for update
-.response
-include::{snippets}/contracts/PUT-404/http-response.adoc[]
-
-=== DELETE
-.request
-include::{snippets}/contracts/DELETE-200/http-request.adoc[]
-
-==== Contract deleted sucessfully
-.response
-include::{snippets}/contracts/DELETE-200/http-response.adoc[]
-
-==== Contract not found for deletion
-.response
-include::{snippets}/contracts/DELETE-404/http-response.adoc[]

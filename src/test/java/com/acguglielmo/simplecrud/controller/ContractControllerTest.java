@@ -3,10 +3,8 @@ package com.acguglielmo.simplecrud.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.Test;
@@ -25,8 +23,6 @@ public class ContractControllerTest extends AbstractControllerTest {
 
     private static final String CONTRACTS_BASE_URI = "/contracts";
 
-    private static final String CONTRACTS_RESOURCE_URI = CONTRACTS_BASE_URI + "/{id}";
-
     @Test
     public void shouldReturnHttp201CreatedWhenContractIsCreatedSucessfullyTest() throws Exception {
 
@@ -41,50 +37,6 @@ public class ContractControllerTest extends AbstractControllerTest {
         	)
         	.andExpect( status().isCreated() )
         	.andDo( document("POST-201", new RequestBodySnippet() ) );
-
-    }
-
-    @Test
-    public void shouldReturnHttp200OkWhenContractIsUpdatedSucessfullyTest() throws Exception {
-
-    	final ContractRequest request = Fixture.from(ContractRequest.class).gimme("valid");
-
-        mockMvc.perform( put(CONTRACTS_RESOURCE_URI, 1)
-				.contentType( MediaType.APPLICATION_JSON )
-				.content( mapper.writeValueAsString(request) )
-        	).andExpect(status().isOk())
-        	.andDo( document("PUT-200", new RequestBodySnippet(), new ResponseBodySnippet() ) );
-
-    }
-
-    @Test
-    public void shouldReturnHttp404NotFoundWhenContractIsNotFoundForUpdateTest() throws Exception {
-
-    	final ContractRequest request = Fixture.from(ContractRequest.class).gimme("valid");
-
-        mockMvc.perform( put(CONTRACTS_RESOURCE_URI, 2)
-    			.contentType( MediaType.APPLICATION_JSON )
-    			.content( mapper.writeValueAsString(request) )
-        	).andExpect(status().isNotFound())
-        	.andDo( document("PUT-404") );
-
-    }
-
-    @Test
-    public void shouldReturnHttp200OkWhenContractIsDeletedSucessfullyTest() throws Exception {
-
-        mockMvc.perform( delete(CONTRACTS_RESOURCE_URI, 1))
-        	.andExpect(status().isOk())
-        	.andDo( document("DELETE-200") );
-
-    }
-
-    @Test
-    public void shouldReturnHttp404NotFoundWhenContractIsNotFoundForDeletionTest() throws Exception {
-
-        mockMvc.perform( delete(CONTRACTS_RESOURCE_URI, 2))
-        	.andExpect(status().isNotFound())
-        	.andDo( document("DELETE-404") );
 
     }
 
