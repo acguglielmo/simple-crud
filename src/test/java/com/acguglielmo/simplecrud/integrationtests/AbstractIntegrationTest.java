@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.empty;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -17,6 +18,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
 
 import com.acguglielmo.simplecrud.SimpleCrudApplication;
@@ -29,7 +32,7 @@ import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader;
 @AutoConfigureMockMvc
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = SimpleCrudApplication.class)
-public abstract class AbstractIntegrationTest {
+public abstract class AbstractIntegrationTest<T, Y> {
 
     @Autowired
     protected ObjectMapper mapper;
@@ -91,7 +94,7 @@ public abstract class AbstractIntegrationTest {
 
 	}
 
-    protected <T> T create(final String fixtureName) throws Exception {
+    protected Y create(final String fixtureName) throws Exception {
 
 		final T request = Fixture.from( getRequestClass() ).gimme(fixtureName);
 
@@ -124,13 +127,40 @@ public abstract class AbstractIntegrationTest {
 
 	}
 
+	protected void update(final Object resourceId, final Object... resourceIds) throws Exception {
+
+		final T request = Fixture.from( getRequestClass() ).gimme("updating");
+
+        final ResultActions resultActions = mockMvc.perform( put(getResourceUri(), resourceId, resourceIds )
+				.contentType( MediaType.APPLICATION_JSON )
+				.content( mapper.writeValueAsString(request) )
+	    	).andExpect(status().isOk())
+	    	.andExpect( jsonPath("$").exists() )
+	    	.andExpect( resourceIdMatcher().value( resourceId ) );
+
+        applyCustomActionsAfterUpdate(resultActions, request );
+
+	}
+
+
+	protected void delete(final Object resourceId, final Object... resourceIds) throws Exception {
+
+        mockMvc.perform( MockMvcRequestBuilders.delete(getResourceUri(), resourceId, resourceIds ))
+	    	.andExpect( status().isNoContent() )
+	    	.andExpect( jsonPath("$").doesNotExist() );
+
+	}
+
     protected abstract String getBaseUri();
 
     protected abstract String getResourceUri();
 
-    protected abstract <T> Class<T> getResponseClass();
+    protected abstract Class<T> getRequestClass();
 
-    protected abstract <T> Class<T> getRequestClass();
+    protected abstract Class<Y> getResponseClass();
 
     protected abstract JsonPathResultMatchers resourceIdMatcher();
+
+    protected abstract void applyCustomActionsAfterUpdate(ResultActions resultActions, T putRequest) throws Exception;
+
 }
