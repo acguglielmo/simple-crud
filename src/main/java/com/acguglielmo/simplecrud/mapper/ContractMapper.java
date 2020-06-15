@@ -1,13 +1,18 @@
 package com.acguglielmo.simplecrud.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import com.acguglielmo.simplecrud.entity.Contract;
 import com.acguglielmo.simplecrud.response.ContractResponse;
 
-@Mapper(componentModel = "spring")
+@Mapper(
+	componentModel = "spring",
+	uses = { CustomerMapper.class, ServiceMapper.class })
 public interface ContractMapper {
 
-	ContractResponse fromEntity( Contract entity );
+	@Mapping(source = "id.number", target = "number")
+	@Mapping(source = "id.customer", target = "customer")
+	ContractResponse fromEntity(Contract entity);
 
 }
