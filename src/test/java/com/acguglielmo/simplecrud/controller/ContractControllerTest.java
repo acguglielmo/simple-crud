@@ -1,5 +1,7 @@
 package com.acguglielmo.simplecrud.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -14,6 +16,7 @@ import org.springframework.restdocs.payload.RequestBodySnippet;
 import org.springframework.restdocs.payload.ResponseBodySnippet;
 
 import com.acguglielmo.simplecrud.request.ContractRequest;
+import com.acguglielmo.simplecrud.response.ContractResponse;
 
 import br.com.six2six.fixturefactory.Fixture;
 
@@ -27,6 +30,9 @@ public class ContractControllerTest extends AbstractControllerTest {
     @Test
     public void shouldReturnHttp201CreatedWhenContractIsCreatedSucessfullyTest() throws Exception {
 
+    	when( contractService.create(any()) )
+    		.thenReturn( Fixture.from( ContractResponse.class ).gimme( "valid" ) );
+
     	final ContractRequest request = Fixture.from(ContractRequest.class).gimme("valid");
 
         mockMvc.perform( post( CONTRACTS_BASE_URI )
@@ -35,24 +41,6 @@ public class ContractControllerTest extends AbstractControllerTest {
         	)
         	.andExpect( status().isCreated() )
         	.andDo( document("POST-201", new RequestBodySnippet() ) );
-
-    }
-
-    @Test
-    public void shouldReturnHttp200OkWhenContractIsFoundByIdTest() throws Exception {
-
-        mockMvc.perform( get(CONTRACTS_RESOURCE_URI, 1) )
-            .andExpect(status().isOk() )
-            .andDo(document("GET-by-id-200", new ResponseBodySnippet() ));
-
-    }
-
-    @Test
-    public void shouldReturnHttp404NotFoundWhenContractIsNotFoundByIdTest() throws Exception {
-
-        mockMvc.perform( get(CONTRACTS_RESOURCE_URI, 2) )
-            .andExpect(status().isNotFound() )
-            .andDo( document("GET-by-id-404") );
 
     }
 

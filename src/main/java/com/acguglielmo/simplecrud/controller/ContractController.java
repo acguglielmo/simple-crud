@@ -3,10 +3,9 @@ package com.acguglielmo.simplecrud.controller;
 import static java.lang.String.format;
 
 import java.net.URI;
-import java.util.Collections;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -21,37 +20,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.acguglielmo.simplecrud.request.ContractRequest;
 import com.acguglielmo.simplecrud.response.ContractResponse;
+import com.acguglielmo.simplecrud.service.ContractService;
 
 @RestController
 @RequestMapping("/contracts")
 public class ContractController {
 
+	@Autowired
+	private ContractService contractService;
+
 	@GetMapping
 	public ResponseEntity<Page<ContractResponse>> findAll(
 		@PageableDefault final Pageable pageable) {
 
-		if (pageable.getPageNumber() == 10) {
-
-			final ContractResponse content = new ContractResponse();
-
-			return ResponseEntity.ok(new PageImpl<ContractResponse>(Collections.singletonList(content)));
-
-		}
-
-		return ResponseEntity.ok(Page.empty());
-
-	}
-
-	@GetMapping("/{id}")
-	public ResponseEntity<ContractResponse> findBy(@PathVariable final Long id) {
-
-		if ( Long.valueOf(1L).equals(id) ) {
-
-			return ResponseEntity.ok().build();
-
-		}
-
-		return ResponseEntity.notFound().build();
+		return ResponseEntity.ok( contractService.findAll(pageable) );
 
 	}
 
@@ -59,9 +41,11 @@ public class ContractController {
     public ResponseEntity<ContractResponse> create(
     	@RequestBody final ContractRequest request) {
 
-        final URI location = URI.create(format("/contracts/%d", 1));
+    	final ContractResponse contractResponse = contractService.create(request);
 
-        return ResponseEntity.created(location).build();
+        final URI location = URI.create( format("/contracts/%s", contractResponse.getNumber() ));
+
+        return ResponseEntity.created(location).body(contractResponse);
 
     }
 
