@@ -67,15 +67,15 @@ include::{snippets}/customers/DELETE-404/http-response.adoc[]
 
 === GET /{cnpj}/contracts/{number}
 .request
-include::{snippets}/contracts/GET-contract-by-cnpj-and-number-200/http-request.adoc[]
+include::{snippets}/customers/GET-contract-by-cnpj-and-number-200/http-request.adoc[]
 
 ==== Contract found by id:
 .response
-include::{snippets}/contracts/GET-contract-by-cnpj-and-number-200/http-response.adoc[]
+include::{snippets}/customers/GET-contract-by-cnpj-and-number-200/http-response.adoc[]
 
 ==== Contract not found by id:
 .response
-include::{snippets}/contracts/GET-contract-by-cnpj-and-number-404/http-response.adoc[]
+include::{snippets}/customers/GET-contract-by-cnpj-and-number-404/http-response.adoc[]
 
 
 == Services
