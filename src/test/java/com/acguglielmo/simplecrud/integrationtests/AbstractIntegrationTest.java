@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
 
 import com.acguglielmo.simplecrud.SimpleCrudApplication;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -106,6 +107,23 @@ public abstract class AbstractIntegrationTest {
 
     }
 
+	protected void shouldFind(final Object resourceId, final Object... resourceIds) throws Exception {
+
+        mockMvc.perform( get(getResourceUri(), resourceId, resourceIds ) )
+	        .andExpect( status().isOk() )
+	        .andExpect( jsonPath("$").exists() )
+	        .andExpect( resourceIdMatcher().value( resourceId ) );
+
+	}
+
+	protected void shouldNotFind(final Object resourceId, final Object... resourceIds) throws Exception {
+
+		mockMvc.perform( get(getResourceUri(), resourceId, resourceIds ) )
+	        .andExpect( status().isNotFound() )
+	        .andExpect( jsonPath("$").doesNotExist() );
+
+	}
+
     protected abstract String getBaseUri();
 
     protected abstract String getResourceUri();
@@ -114,4 +132,5 @@ public abstract class AbstractIntegrationTest {
 
     protected abstract <T> Class<T> getRequestClass();
 
+    protected abstract JsonPathResultMatchers resourceIdMatcher();
 }

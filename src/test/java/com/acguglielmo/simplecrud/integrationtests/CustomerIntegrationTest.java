@@ -1,6 +1,5 @@
 package com.acguglielmo.simplecrud.integrationtests;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -10,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
 
 import com.acguglielmo.simplecrud.repository.CustomerRepository;
 import com.acguglielmo.simplecrud.request.CustomerRequest;
@@ -38,13 +38,13 @@ public class CustomerIntegrationTest extends AbstractIntegrationTest {
 
 		final CustomerResponse customer = super.create("valid");
 
-		shouldFind(customer);
+		super.shouldFind(customer.getCnpj());
 
 		update(customer);
 
 		delete(customer);
 
-		shouldNotFind(customer);
+		super.shouldNotFind(customer.getCnpj());
 
 	}
 
@@ -52,23 +52,6 @@ public class CustomerIntegrationTest extends AbstractIntegrationTest {
 	public void shouldPerformPaginatedQueryUsingGetTest() throws Exception {
 
 		super.shouldPerformPaginatedQueryUsingGetTest( CUSTOMERS_BASE_URI );
-
-	}
-
-	private void shouldNotFind(final CustomerResponse customer) throws Exception {
-
-        mockMvc.perform( get(CUSTOMERS_RESOURCE_URI, customer.getCnpj() ) )
-	        .andExpect( status().isNotFound() )
-	        .andExpect( jsonPath("$").doesNotExist() );
-
-	}
-
-	private void shouldFind(final CustomerResponse customer) throws Exception {
-
-        mockMvc.perform( get(CUSTOMERS_RESOURCE_URI, customer.getCnpj() ) )
-	        .andExpect( status().isOk() )
-	        .andExpect( jsonPath("$").exists() )
-	        .andExpect( jsonPath("$.cnpj").value( customer.getCnpj() ) );
 
 	}
 
@@ -119,6 +102,12 @@ public class CustomerIntegrationTest extends AbstractIntegrationTest {
 	protected Class<CustomerRequest> getRequestClass() {
 
 		return CustomerRequest.class;
+	}
+
+	@Override
+	protected JsonPathResultMatchers resourceIdMatcher() {
+
+		return jsonPath("$.cnpj");
 	}
 
 }

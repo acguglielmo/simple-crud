@@ -1,6 +1,5 @@
 package com.acguglielmo.simplecrud.integrationtests;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -10,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
 
 import com.acguglielmo.simplecrud.repository.ServiceRepository;
 import com.acguglielmo.simplecrud.request.ServiceRequest;
@@ -38,13 +38,13 @@ public class ServiceIntegrationTest extends AbstractIntegrationTest {
 
 		final ServiceResponse service = super.create("valid");
 
-		shouldFind(service);
+		super.shouldFind( service.getId() );
 
 		update(service);
 
 		delete(service);
 
-		shouldNotFind(service);
+		super.shouldNotFind(service.getId());
 
 	}
 
@@ -52,23 +52,6 @@ public class ServiceIntegrationTest extends AbstractIntegrationTest {
 	public void shouldPerformPaginatedQueryUsingGetTest() throws Exception {
 
 		super.shouldPerformPaginatedQueryUsingGetTest( SERVICES_BASE_URI );
-
-	}
-
-	private void shouldNotFind(final ServiceResponse service) throws Exception {
-
-        mockMvc.perform( get(SERVICES_RESOURCE_URI, service.getId() ) )
-	        .andExpect( status().isNotFound() )
-	        .andExpect( jsonPath("$").doesNotExist() );
-
-	}
-
-	private void shouldFind(final ServiceResponse service) throws Exception {
-
-        mockMvc.perform( get(SERVICES_RESOURCE_URI, service.getId() ) )
-	        .andExpect( status().isOk() )
-	        .andExpect( jsonPath("$").exists() )
-	        .andExpect( jsonPath("$.name").value( service.getName() ) );
 
 	}
 
@@ -107,7 +90,6 @@ public class ServiceIntegrationTest extends AbstractIntegrationTest {
 
 	}
 
-
 	@Override
 	protected Class<ServiceResponse> getResponseClass() {
 
@@ -119,6 +101,13 @@ public class ServiceIntegrationTest extends AbstractIntegrationTest {
 	protected Class<ServiceRequest> getRequestClass() {
 
 		return ServiceRequest.class;
+	}
+
+	@Override
+	protected JsonPathResultMatchers resourceIdMatcher() {
+
+		return jsonPath("$.id") ;
+
 	}
 
 }
