@@ -115,9 +115,9 @@ public class ContractIntegrationTest extends AbstractIntegrationTest<ContractReq
 		if ( isNull(customerCnpj) ) {
 
 			final String contentAsString = mockMvc.perform( post( "/customers" )
-					.contentType( MediaType.APPLICATION_JSON )
-					.content( new ObjectMapper().writeValueAsString(Fixture.from( CustomerRequest.class ).gimme("random info")) )
-					).andExpect(status().isCreated())
+				.contentType( MediaType.APPLICATION_JSON )
+				.content( new ObjectMapper().writeValueAsString(Fixture.from( CustomerRequest.class ).gimme("random info")) ))
+					.andExpect(status().isCreated())
 					.andReturn()
 					.getResponse()
 					.getContentAsString();
