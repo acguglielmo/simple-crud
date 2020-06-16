@@ -3,10 +3,9 @@ package com.acguglielmo.simplecrud.controller;
 import static java.lang.String.format;
 
 import java.net.URI;
-import java.util.Collections;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -21,75 +20,63 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.acguglielmo.simplecrud.request.ContractRequest;
 import com.acguglielmo.simplecrud.response.ContractResponse;
+import com.acguglielmo.simplecrud.service.ContractService;
 
 @RestController
-@RequestMapping("/contracts")
+@RequestMapping("/customers/{cnpj}/contracts")
 public class ContractController {
+
+	@Autowired
+	private ContractService contractService;
 
 	@GetMapping
 	public ResponseEntity<Page<ContractResponse>> findAll(
 		@PageableDefault final Pageable pageable) {
 
-		if (pageable.getPageNumber() == 10) {
-
-			final ContractResponse content = new ContractResponse();
-
-			return ResponseEntity.ok(new PageImpl<ContractResponse>(Collections.singletonList(content)));
-
-		}
-
-		return ResponseEntity.ok(Page.empty());
-
-	}
-
-	@GetMapping("/{id}")
-	public ResponseEntity<ContractResponse> findBy(@PathVariable final Long id) {
-
-		if ( Long.valueOf(1L).equals(id) ) {
-
-			return ResponseEntity.ok().build();
-
-		}
-
-		return ResponseEntity.notFound().build();
+		return ResponseEntity.ok( contractService.findAll(pageable) );
 
 	}
 
     @PostMapping
     public ResponseEntity<ContractResponse> create(
+    	@PathVariable final String cnpj,
     	@RequestBody final ContractRequest request) {
 
-        final URI location = URI.create(format("/contracts/%d", 1));
+    	final ContractResponse contractResponse = contractService.create(cnpj, request);
 
-        return ResponseEntity.created(location).build();
+        final URI location =
+        	URI.create( format("/customer/%s/contracts/%s", cnpj, contractResponse.getNumber() ));
+
+        return ResponseEntity.created(location).body(contractResponse);
 
     }
 
-    @PutMapping("/{id}")
+	@GetMapping("/{number}")
+	public ResponseEntity<ContractResponse> findContractBy(
+		@PathVariable final String cnpj,
+		@PathVariable final String number) {
+
+		return ResponseEntity.of( contractService.findBy(number, cnpj) );
+
+	}
+
+    @PutMapping("/{number}")
     public ResponseEntity<ContractResponse> update(
-    	@PathVariable final Long id,
+    	@PathVariable final String cnpj,
+    	@PathVariable final String number,
     	@RequestBody final ContractRequest request) {
 
-		if ( Long.valueOf(1L).equals(id) ) {
-
-			return ResponseEntity.ok().build();
-
-		}
-
-		return ResponseEntity.notFound().build();
+    	return ResponseEntity.of( contractService.update(number, cnpj, request) );
 
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBy(@PathVariable final Long id) {
+    @DeleteMapping("/{number}")
+    public ResponseEntity<Void> deleteBy(
+		@PathVariable final String cnpj,
+    	@PathVariable final String number) {
 
-		if ( Long.valueOf(1L).equals(id) ) {
-
-			return ResponseEntity.ok().build();
-
-		}
-
-		return ResponseEntity.notFound().build();
+    	return contractService.delete(number, cnpj) ?
+        	ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
 
     }
 

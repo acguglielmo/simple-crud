@@ -31,7 +31,7 @@ public class CustomerControllerTest extends AbstractControllerTest {
 
     private static final String CUSTOMERS_BASE_URI = "/customers";
 
-    private static final String CUSTOMERS_RESOURCE_URI = CUSTOMERS_BASE_URI + "/{id}";
+    private static final String CUSTOMERS_RESOURCE_URI = CUSTOMERS_BASE_URI + "/{cnpj}";
 
     @Test
     public void shouldReturnHttp201CreatedWhenCustomerIsCreatedSucessfullyTest() throws Exception {
