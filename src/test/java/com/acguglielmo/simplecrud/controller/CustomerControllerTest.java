@@ -21,9 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.RequestBodySnippet;
 import org.springframework.restdocs.payload.ResponseBodySnippet;
 
-import com.acguglielmo.simplecrud.request.ContractRequest;
 import com.acguglielmo.simplecrud.request.CustomerRequest;
-import com.acguglielmo.simplecrud.response.ContractResponse;
 import com.acguglielmo.simplecrud.response.CustomerResponse;
 
 import br.com.six2six.fixturefactory.Fixture;
@@ -34,8 +32,6 @@ public class CustomerControllerTest extends AbstractControllerTest {
     private static final String CUSTOMERS_BASE_URI = "/customers";
 
     private static final String CUSTOMERS_RESOURCE_URI = CUSTOMERS_BASE_URI + "/{cnpj}";
-
-    private static final String CUSTOMERS_CONTRACTS_RESOURCE_URI = CUSTOMERS_RESOURCE_URI + "/contracts/{number}";
 
     @Test
     public void shouldReturnHttp201CreatedWhenCustomerIsCreatedSucessfullyTest() throws Exception {
@@ -176,90 +172,6 @@ public class CustomerControllerTest extends AbstractControllerTest {
             .andExpect( jsonPath("$.content").exists() )
             .andExpect( jsonPath("$.content.size()").value(1) )
             .andDo( document("paginated-GET-200-returning-itens", new ResponseBodySnippet() ) );
-
-    }
-
-    @Test
-    public void shouldReturnHttp200OkWhenContractIsFoundByCnpjAndNumberTest() throws Exception {
-
-    	when( contractService.findBy("number-01", "39100116000138") )
-    		.thenReturn( Optional.of( Fixture.from( ContractResponse.class ).gimme( "valid") ) );
-
-        mockMvc.perform( get(CUSTOMERS_CONTRACTS_RESOURCE_URI, "39100116000138", "number-01") )
-            .andExpect(status().isOk() )
-            .andExpect(jsonPath("$").exists() )
-            .andDo(document("GET-contract-by-cnpj-and-number-200", new ResponseBodySnippet() ));
-
-    }
-
-    @Test
-    public void shouldReturnHttp404NotFoundWhenContractIsNotFoundByCnpjAndNumberTest() throws Exception {
-
-    	when( contractService.findBy("number-01", "39100116000138") )
-			.thenReturn( Optional.empty() );
-
-    	mockMvc.perform( get(CUSTOMERS_CONTRACTS_RESOURCE_URI, "39100116000138", "number-01") )
-            .andExpect(status().isNotFound() )
-            .andExpect(jsonPath("$").doesNotExist() )
-            .andDo( document("GET-contract-by-cnpj-and-number-404") );
-
-    }
-
-    @Test
-    public void shouldReturnHttp200OkWhenContractIsUpdatedSucessfullyTest() throws Exception {
-
-    	when( contractService.update( eq("number-01"), eq("39100116000138"), any() ) )
-    		.thenReturn( Optional.of( Fixture.from( ContractResponse.class ).gimme( "valid") ) );
-
-    	final ContractRequest request = Fixture.from(ContractRequest.class).gimme("valid");
-
-    	mockMvc.perform( put(CUSTOMERS_CONTRACTS_RESOURCE_URI, "39100116000138", "number-01")
-				.contentType( MediaType.APPLICATION_JSON )
-				.content( mapper.writeValueAsString(request) )
-        	).andExpect(status().isOk())
-        	.andDo( document("PUT-contract-200", new RequestBodySnippet(), new ResponseBodySnippet() ) );
-
-    }
-
-    @Test
-    public void shouldReturnHttp404NotFoundWhenContractIsNotFoundForUpdateTest() throws Exception {
-
-    	when( contractService.update( eq("number-01"), eq("39100116000138"), any() ) )
-			.thenReturn( Optional.empty() );
-
-    	final ContractRequest request = Fixture.from(ContractRequest.class).gimme("valid");
-
-		mockMvc.perform( put(CUSTOMERS_CONTRACTS_RESOURCE_URI, "39100116000138", "number-01")
-    			.contentType( MediaType.APPLICATION_JSON )
-    			.content( mapper.writeValueAsString(request) )
-        	).andExpect(status().isNotFound())
-        	.andDo( document("PUT-contract-404") );
-
-    }
-
-    @Test
-    public void shouldReturnHttp204NoContentWhenContractIsDeletedSucessfullyTest() throws Exception {
-
-    	when( contractService.delete( "number-01", "39100116000138") )
-			.thenReturn( true );
-
-		mockMvc.perform( delete(CUSTOMERS_CONTRACTS_RESOURCE_URI, "39100116000138", "number-01"))
-        	.andExpect(status().isNoContent() )
-        	.andExpect(jsonPath("$").doesNotExist() )
-        	.andDo( document("DELETE-contract-200") );
-
-    }
-
-    @Test
-    public void shouldReturnHttp404NotFoundWhenContractIsNotFoundForDeletionTest() throws Exception {
-
-    	when( contractService.delete( "number-01", "39100116000138") )
-			.thenReturn( false );
-
-		mockMvc.perform( delete(CUSTOMERS_CONTRACTS_RESOURCE_URI, "39100116000138", "number-01"))
-        	.andExpect(status().isNotFound() )
-        	.andExpect(jsonPath("$").doesNotExist() )
-        	.andDo( document("DELETE-contract-404") );
 
     }
 

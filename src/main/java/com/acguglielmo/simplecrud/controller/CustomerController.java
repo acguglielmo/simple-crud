@@ -18,11 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.acguglielmo.simplecrud.request.ContractRequest;
 import com.acguglielmo.simplecrud.request.CustomerRequest;
-import com.acguglielmo.simplecrud.response.ContractResponse;
 import com.acguglielmo.simplecrud.response.CustomerResponse;
-import com.acguglielmo.simplecrud.service.ContractService;
 import com.acguglielmo.simplecrud.service.CustomerService;
 
 @RestController
@@ -31,9 +28,6 @@ public class CustomerController {
 
 	@Autowired
 	private CustomerService customerService;
-
-	@Autowired
-	private ContractService contractService;
 
 	@GetMapping
 	public ResponseEntity<Page<CustomerResponse>> findAll(
@@ -76,35 +70,6 @@ public class CustomerController {
 
     	return customerService.delete(cnpj) ?
     		ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
-
-    }
-
-	@GetMapping("/{cnpj}/contracts/{number}")
-	public ResponseEntity<ContractResponse> findContractBy(
-		@PathVariable final String cnpj,
-		@PathVariable final String number) {
-
-		return ResponseEntity.of( contractService.findBy(number, cnpj) );
-
-	}
-
-    @PutMapping("/{cnpj}/contracts/{number}")
-    public ResponseEntity<ContractResponse> update(
-    	@PathVariable final String cnpj,
-    	@PathVariable final String number,
-    	@RequestBody final ContractRequest request) {
-
-    	return ResponseEntity.of( contractService.update(number, cnpj, request) );
-
-    }
-
-    @DeleteMapping("/{cnpj}/contracts/{number}")
-    public ResponseEntity<Void> deleteBy(
-		@PathVariable final String cnpj,
-    	@PathVariable final String number) {
-
-    	return contractService.delete(number, cnpj) ?
-        	ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
 
     }
 

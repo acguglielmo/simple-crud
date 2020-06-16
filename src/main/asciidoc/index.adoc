@@ -63,45 +63,6 @@ include::{snippets}/customers/DELETE-204/http-response.adoc[]
 .response
 include::{snippets}/customers/DELETE-404/http-response.adoc[]
 
-== Customer's contracts
-
-=== GET /customers/{cnpj}/contracts/{number}
-.request
-include::{snippets}/customers/GET-contract-by-cnpj-and-number-200/http-request.adoc[]
-
-==== Contract found by id:
-.response
-include::{snippets}/customers/GET-contract-by-cnpj-and-number-200/http-response.adoc[]
-
-==== Contract not found by id:
-.response
-include::{snippets}/customers/GET-contract-by-cnpj-and-number-404/http-response.adoc[]
-
-=== PUT /customers/{cnpj}/contracts/{number}
-.request
-include::{snippets}/customers/PUT-contract-200/http-request.adoc[]
-
-==== Contract updated successfully
-.response
-include::{snippets}/customers/PUT-contract-200/http-response.adoc[]
-
-==== Contract not found for update
-.response
-include::{snippets}/customers/PUT-contract-404/http-response.adoc[]
-
-=== DELETE /customers/{cnpj}/contracts/{number}
-.request
-include::{snippets}/customers/DELETE-contract-200/http-request.adoc[]
-
-==== Contract deleted sucessfully
-.response
-include::{snippets}/customers/DELETE-contract-204/http-response.adoc[]
-
-==== Contract not found for deletion
-.response
-include::{snippets}/customers/DELETE-contract-404/http-response.adoc[]
-
-
 
 == Services
 
@@ -167,7 +128,7 @@ include::{snippets}/services/DELETE-404/http-response.adoc[]
 
 == Contracts
 
-=== GET /contracts
+=== GET /customers/{cnpj}/contracts
 .request
 include::{snippets}/contracts/paginated-GET-200-returning-itens/http-request.adoc[]
 
@@ -179,11 +140,46 @@ include::{snippets}/contracts/paginated-GET-200-returning-itens/http-response.ad
 .response
 include::{snippets}/contracts/paginated-GET-200-returning-no-itens/http-response.adoc[]
 
-
-=== POST /contracts
+=== POST /customers/{cnpj}/contracts
 .request
 include::{snippets}/contracts/POST-201/http-request.adoc[]
 
 .response
 include::{snippets}/contracts/POST-201/http-response.adoc[]
+
+=== GET /customers/{cnpj}/contracts/{number}
+.request
+include::{snippets}/contracts/GET-by-cnpj-and-number-200/http-request.adoc[]
+
+==== Contract found by id:
+.response
+include::{snippets}/contracts/GET-by-cnpj-and-number-200/http-response.adoc[]
+
+==== Contract not found by id:
+.response
+include::{snippets}/contracts/GET-by-cnpj-and-number-404/http-response.adoc[]
+
+=== PUT /customers/{cnpj}/contracts/{number}
+.request
+include::{snippets}/contracts/PUT-200/http-request.adoc[]
+
+==== Contract updated successfully
+.response
+include::{snippets}/contracts/PUT-200/http-response.adoc[]
+
+==== Contract not found for update
+.response
+include::{snippets}/contracts/PUT-404/http-response.adoc[]
+
+=== DELETE /customers/{cnpj}/contracts/{number}
+.request
+include::{snippets}/contracts/DELETE-200/http-request.adoc[]
+
+==== Contract deleted sucessfully
+.response
+include::{snippets}/contracts/DELETE-204/http-response.adoc[]
+
+==== Contract not found for deletion
+.response
+include::{snippets}/contracts/DELETE-404/http-response.adoc[]
 
