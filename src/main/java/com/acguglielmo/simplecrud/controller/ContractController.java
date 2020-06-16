@@ -39,11 +39,13 @@ public class ContractController {
 
     @PostMapping
     public ResponseEntity<ContractResponse> create(
+    	@PathVariable final String cnpj,
     	@RequestBody final ContractRequest request) {
 
-    	final ContractResponse contractResponse = contractService.create(request);
+    	final ContractResponse contractResponse = contractService.create(cnpj, request);
 
-        final URI location = URI.create( format("/contracts/%s", contractResponse.getNumber() ));
+        final URI location =
+        	URI.create( format("/customer/%s/contracts/%s", cnpj, contractResponse.getNumber() ));
 
         return ResponseEntity.created(location).body(contractResponse);
 

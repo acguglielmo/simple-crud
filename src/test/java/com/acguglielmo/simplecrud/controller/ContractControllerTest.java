@@ -34,7 +34,7 @@ public class ContractControllerTest extends AbstractControllerTest {
     @Test
     public void shouldReturnHttp201CreatedWhenContractIsCreatedSucessfullyTest() throws Exception {
 
-    	when( contractService.create(any()) )
+    	when( contractService.create( eq("39100116000138"), any()) )
     		.thenReturn( Fixture.from( ContractResponse.class ).gimme( "valid" ) );
 
     	final ContractRequest request = Fixture.from(ContractRequest.class).gimme("valid");

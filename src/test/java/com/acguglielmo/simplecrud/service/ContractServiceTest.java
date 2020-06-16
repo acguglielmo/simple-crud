@@ -7,7 +7,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -144,7 +143,7 @@ public class ContractServiceTest {
 
 		final Customer customer = Fixture.from(Customer.class).gimme("valid");
 
-		when( customerRepository.findById( eq(request.getCustomerCnpj()) ) )
+		when( customerRepository.findById( "50263675000100" ) )
 			.thenReturn( Optional.of(customer) );
 
 		final Service service = Fixture.from(Service.class).gimme("valid");
@@ -155,7 +154,7 @@ public class ContractServiceTest {
 		when( repository.save(any()) )
 			.thenAnswer( e -> e.getArgument(0) );
 
-		final ContractResponse result = contractService.create(request);
+		final ContractResponse result = contractService.create("50263675000100" ,request);
 
 		assertThat(result, notNullValue() );
 

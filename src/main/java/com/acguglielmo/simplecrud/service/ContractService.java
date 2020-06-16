@@ -46,9 +46,9 @@ public class ContractService {
 
 	}
 
-	public ContractResponse create( final ContractRequest request) {
+	public ContractResponse create(final String customerCnpj, final ContractRequest request) {
 
-		final Customer customer = findCustomer(request);
+		final Customer customer = findCustomer(customerCnpj);
 
 		final Contract contract = new Contract( new ContractId("a number", customer) );
 
@@ -89,9 +89,9 @@ public class ContractService {
 
 	}
 
-	private Customer findCustomer(final ContractRequest request) {
+	private Customer findCustomer(final String cnpj) {
 
-		return customerRepository.findById( request.getCustomerCnpj() )
+		return customerRepository.findById( cnpj )
 			.orElseThrow( () -> new RuntimeException("Customer not found!") ) ;
 	}
 
