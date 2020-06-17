@@ -1,12 +1,16 @@
 package com.acguglielmo.simplecrud.integrationtests;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.web.util.UriComponentsBuilder.fromPath;
+
+import java.util.Collections;
+import java.util.Map;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.acguglielmo.simplecrud.repository.ServiceRepository;
 import com.acguglielmo.simplecrud.request.ServiceRequest;
@@ -29,13 +33,15 @@ public class ServiceIntegrationTest extends AbstractIntegrationTest<ServiceReque
 
 		final ServiceResponse service = super.create("valid");
 
-		super.shouldFind( service.getId() );
+		final Map<String, Object> uriVariables = Collections.singletonMap("id", service.getId() );
 
-		super.update( service.getId() );
+		super.shouldFind( uriVariables );
 
-		super.delete( service.getId() );
+		super.update( uriVariables );
 
-		super.shouldNotFind(service.getId());
+		super.delete( uriVariables );
+
+		super.shouldNotFind( uriVariables );
 
 	}
 
@@ -48,15 +54,15 @@ public class ServiceIntegrationTest extends AbstractIntegrationTest<ServiceReque
 	}
 
 	@Override
-	protected String getBaseUri() {
+	protected UriComponentsBuilder getBaseUri() {
 
-		return "/services";
+		return fromPath("/services");
 	}
 
 	@Override
-	protected String getResourceUri() {
+	protected UriComponentsBuilder getResourceUri() {
 
-		return getBaseUri() + "/{id}";
+		return getBaseUri().path("/{id}");
 
 	}
 
@@ -71,13 +77,6 @@ public class ServiceIntegrationTest extends AbstractIntegrationTest<ServiceReque
 	protected Class<ServiceRequest> getRequestClass() {
 
 		return ServiceRequest.class;
-	}
-
-	@Override
-	protected JsonPathResultMatchers resourceIdMatcher() {
-
-		return jsonPath("$.id") ;
-
 	}
 
 	@Override

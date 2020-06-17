@@ -173,7 +173,7 @@ include::{snippets}/contracts/PUT-404/http-response.adoc[]
 
 === DELETE /customers/{cnpj}/contracts/{number}
 .request
-include::{snippets}/contracts/DELETE-200/http-request.adoc[]
+include::{snippets}/contracts/DELETE-204/http-request.adoc[]
 
 ==== Contract deleted sucessfully
 .response
