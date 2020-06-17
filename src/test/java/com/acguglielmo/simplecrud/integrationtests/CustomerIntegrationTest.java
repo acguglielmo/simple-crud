@@ -106,7 +106,7 @@ public class CustomerIntegrationTest extends AbstractIntegrationTest<CustomerReq
 	}
 
 	@Override
-    protected void applyCustomActionsAfterUpdate(
+    protected void applyCustomActionsAfterCreateOrUpdate(
     	final ResultActions resultActions, final CustomerRequest customerRequest) throws Exception {
 
 		resultActions.andExpect(

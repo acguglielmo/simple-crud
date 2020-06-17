@@ -106,7 +106,7 @@ public class ServiceIntegrationTest extends AbstractIntegrationTest<ServiceReque
 	}
 
 	@Override
-    protected void applyCustomActionsAfterUpdate(
+    protected void applyCustomActionsAfterCreateOrUpdate(
     	final ResultActions resultActions, final ServiceRequest serviceRequest) throws Exception {
 
 		resultActions.andExpect(

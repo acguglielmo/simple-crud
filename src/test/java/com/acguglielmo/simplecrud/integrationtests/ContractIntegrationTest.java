@@ -27,6 +27,7 @@ import com.acguglielmo.simplecrud.repository.ServiceRepository;
 import com.acguglielmo.simplecrud.request.ContractRequest;
 import com.acguglielmo.simplecrud.request.CustomerRequest;
 import com.acguglielmo.simplecrud.request.ServiceRequest;
+import com.acguglielmo.simplecrud.request.TermRequest;
 import com.acguglielmo.simplecrud.response.ContractResponse;
 import com.acguglielmo.simplecrud.response.CustomerResponse;
 import com.acguglielmo.simplecrud.response.ServiceResponse;
@@ -107,6 +108,7 @@ public class ContractIntegrationTest extends AbstractIntegrationTest<ContractReq
 
 	    final ContractRequest request = new ContractRequest();
 	    request.setServiceId( serviceId );
+	    request.setTerm( Fixture.from( TermRequest.class ).gimme("valid") );
 
 	    mockMvc.perform( post( "/customers/0000000000000/contracts" )
                 .contentType( MediaType.APPLICATION_JSON )
@@ -123,6 +125,7 @@ public class ContractIntegrationTest extends AbstractIntegrationTest<ContractReq
         final ContractRequest request = new ContractRequest();
         request.setServiceId( 99965L );
         request.setNumber( RandomStringUtils.randomAlphanumeric(10) );
+        request.setTerm( Fixture.from( TermRequest.class ).gimme("valid") );
 
         mockMvc.perform( post( getPostUri() )
                 .contentType( MediaType.APPLICATION_JSON )
@@ -141,6 +144,7 @@ public class ContractIntegrationTest extends AbstractIntegrationTest<ContractReq
 	    final ContractRequest request = new ContractRequest();
         request.setServiceId( serviceId );
         request.setNumber( contractNumber );
+        request.setTerm( Fixture.from( TermRequest.class ).gimme("valid") );
 
         mockMvc.perform( post( getPostUri() )
                 .contentType( MediaType.APPLICATION_JSON )
@@ -184,6 +188,7 @@ public class ContractIntegrationTest extends AbstractIntegrationTest<ContractReq
 		final ContractRequest request = new ContractRequest();
 		request.setServiceId(serviceId);
 		request.setNumber( contractNumber );
+		request.setTerm( Fixture.from( TermRequest.class ).gimme("valid") );
 
 		return Optional.of( request );
 
@@ -203,8 +208,14 @@ public class ContractIntegrationTest extends AbstractIntegrationTest<ContractReq
 	}
 
 	@Override
-    protected void applyCustomActionsAfterUpdate(
+    protected void applyCustomActionsAfterCreateOrUpdate(
     	final ResultActions resultActions, final ContractRequest contractRequest) throws Exception {
+
+		resultActions
+			.andExpect( jsonPath("$").exists() )
+			.andExpect( jsonPath("$.service.id").value( contractRequest.getServiceId() ) )
+			.andExpect( jsonPath("$.term.beggining").value( contractRequest.getTerm().getBeggining() ) )
+			.andExpect( jsonPath("$.term.end").value( contractRequest.getTerm().getEnd() ) );
 
 	}
 

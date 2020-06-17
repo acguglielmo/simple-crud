@@ -105,15 +105,17 @@ public abstract class AbstractIntegrationTest<T, Y> {
     	final T request = getSpecificRequestObjectBeforeCreateOrUpdate()
     		.orElse( Fixture.from( getRequestClass() ).gimme( fixtureName ) );
 
-        final String contentAsString = mockMvc.perform( post( getPostUri() )
+        final ResultActions result = mockMvc.perform( post( getPostUri() )
 	    		.contentType( MediaType.APPLICATION_JSON )
 	    		.content( mapper.writeValueAsString(request) )
-	    	).andExpect(status().isCreated())
-	        .andReturn()
-	        .getResponse()
-	        .getContentAsString();
+	    	)
+        	.andExpect(status().isCreated());
 
-        return mapper.readValue(contentAsString, getResponseClass() );
+        applyCustomActionsAfterCreateOrUpdate(result, request);
+
+        final String contentAsString = result.andReturn().getResponse().getContentAsString();
+
+		return mapper.readValue(contentAsString, getResponseClass() );
 
     }
 
@@ -144,9 +146,8 @@ public abstract class AbstractIntegrationTest<T, Y> {
 				.content( mapper.writeValueAsString(request) )
 	    	).andExpect(status().isOk())
 	    	.andExpect( jsonPath("$").exists() );
-	    	//.andExpect( resourceIdMatcher().value( resourceId ) );
 
-        applyCustomActionsAfterUpdate(resultActions, request );
+        applyCustomActionsAfterCreateOrUpdate(resultActions, request );
 
 	}
 
@@ -171,14 +172,14 @@ public abstract class AbstractIntegrationTest<T, Y> {
 
 	}
 
-    protected abstract UriComponentsBuilder getBaseUri();
+	protected void applyCustomActionsAfterCreateOrUpdate(ResultActions resultActions, T postRequest) throws Exception {};
+
+	protected abstract UriComponentsBuilder getBaseUri();
 
     protected abstract UriComponentsBuilder getResourceUri();
 
     protected abstract Class<T> getRequestClass();
 
     protected abstract Class<Y> getResponseClass();
-
-    protected abstract void applyCustomActionsAfterUpdate(ResultActions resultActions, T putRequest) throws Exception;
 
 }
