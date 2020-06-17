@@ -10,6 +10,8 @@ import com.acguglielmo.simplecrud.entity.Contract;
 import com.acguglielmo.simplecrud.entity.ContractId;
 import com.acguglielmo.simplecrud.entity.Customer;
 import com.acguglielmo.simplecrud.entity.Service;
+import com.acguglielmo.simplecrud.exception.CustomerNotFoundException;
+import com.acguglielmo.simplecrud.exception.ServiceNotFoundException;
 import com.acguglielmo.simplecrud.mapper.ContractMapper;
 import com.acguglielmo.simplecrud.repository.ContractRepository;
 import com.acguglielmo.simplecrud.repository.CustomerRepository;
@@ -92,13 +94,13 @@ public class ContractService {
 	private Customer findCustomer(final String cnpj) {
 
 		return customerRepository.findById( cnpj )
-			.orElseThrow( () -> new RuntimeException("Customer not found!") ) ;
+			.orElseThrow( CustomerNotFoundException::new ) ;
 	}
 
 	private Service findService(final ContractRequest request) {
 
 		return serviceRepository.findById(request.getServiceId() )
-			.orElseThrow( () -> new RuntimeException("Service not found!") ) ;
+			.orElseThrow( ServiceNotFoundException::new ) ;
 	}
 
 }
