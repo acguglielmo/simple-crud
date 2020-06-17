@@ -101,7 +101,7 @@ public abstract class AbstractIntegrationTest<T, Y> {
 
     protected Y create(final String fixtureName) throws Exception {
 
-    	final T request = getSpecificRequestObjectBeforeCreate()
+    	final T request = getSpecificRequestObjectBeforeCreateOrUpdate()
     		.orElse( Fixture.from( getRequestClass() ).gimme( fixtureName ) );
 
         final String contentAsString = mockMvc.perform( post( getPostUri() )
@@ -148,7 +148,8 @@ public abstract class AbstractIntegrationTest<T, Y> {
 
 	protected void update(final Map<String, Object> uriVariables) throws Exception {
 
-		final T request = Fixture.from( getRequestClass() ).gimme("updating");
+    	final T request = getSpecificRequestObjectBeforeCreateOrUpdate()
+        	.orElse(Fixture.from( getRequestClass() ).gimme("updating") );
 
         final ResultActions resultActions = mockMvc.perform( put(getResourceUri().build(uriVariables) )
 				.contentType( MediaType.APPLICATION_JSON )
@@ -170,7 +171,7 @@ public abstract class AbstractIntegrationTest<T, Y> {
 
 	}
 
-	protected Optional<T> getSpecificRequestObjectBeforeCreate() {
+	protected Optional<T> getSpecificRequestObjectBeforeCreateOrUpdate() {
 
 		return Optional.empty();
 

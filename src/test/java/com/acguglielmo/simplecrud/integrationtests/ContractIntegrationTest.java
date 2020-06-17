@@ -64,9 +64,13 @@ public class ContractIntegrationTest extends AbstractIntegrationTest<ContractReq
 
     	contractRepository.deleteAll();
 
-    	serviceRepository.deleteAll();
+    	serviceRepository.deleteById(serviceId);
 
-    	customerRepository.deleteAll();
+    	customerRepository.deleteById(customerCnpj);
+
+    	customerCnpj = null;
+
+    	serviceId = null;
 
     }
 
@@ -119,7 +123,7 @@ public class ContractIntegrationTest extends AbstractIntegrationTest<ContractReq
 	}
 
 	@Override
-	protected Optional<ContractRequest> getSpecificRequestObjectBeforeCreate() {
+	protected Optional<ContractRequest> getSpecificRequestObjectBeforeCreateOrUpdate() {
 
 		final String contractNumber = RandomStringUtils.randomAlphanumeric(10);
 
