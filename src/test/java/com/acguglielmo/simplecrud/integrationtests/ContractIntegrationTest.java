@@ -6,14 +6,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.web.util.UriComponentsBuilder.fromPath;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -34,7 +35,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.six2six.fixturefactory.Fixture;
 
-@Disabled
 public class ContractIntegrationTest extends AbstractIntegrationTest<ContractRequest, ContractResponse> {
 
     @Autowired
@@ -75,7 +75,7 @@ public class ContractIntegrationTest extends AbstractIntegrationTest<ContractReq
 	@Test
 	public void shouldPerformCrudActionsAccordingToAssertionsTest() throws Exception {
 
-		final ContractResponse contract = createContract();
+		final ContractResponse contract = create("valid");
 
 		final Map<String, Object> uriVariables = new HashMap<>();
 		uriVariables.put("cnpj", customerCnpj);
@@ -108,12 +108,30 @@ public class ContractIntegrationTest extends AbstractIntegrationTest<ContractReq
 	}
 
 	@Override
+	protected URI getPostUri() {
+
+		return getBaseUri().build( Collections.singletonMap("cnpj", customerCnpj) );
+	}
+
+	@Override
 	protected UriComponentsBuilder getResourceUri() {
 
 		return getBaseUri().path("/{number}");
 
 	}
 
+	@Override
+	protected Optional<ContractRequest> getSpecificRequestObjectBeforeCreate() {
+
+		final String contractNumber = RandomStringUtils.randomAlphanumeric(10);
+
+		final ContractRequest request = new ContractRequest();
+		request.setServiceId(serviceId);
+		request.setNumber( contractNumber );
+
+		return Optional.of( request );
+
+	}
 
 	@Override
 	protected Class<ContractResponse> getResponseClass() {
@@ -137,31 +155,6 @@ public class ContractIntegrationTest extends AbstractIntegrationTest<ContractReq
 	@Override
     protected void applyCustomActionsAfterUpdate(
     	final ResultActions resultActions, final ContractRequest contractRequest) throws Exception {
-
-	}
-
-	private ContractResponse createContract() throws Exception {
-
-		final String contractNumber = RandomStringUtils.randomAlphanumeric(10);
-
-		final ContractRequest request = new ContractRequest();
-		request.setServiceId(serviceId);
-		request.setNumber( contractNumber );
-
-        final String contentAsString =
-        	mockMvc.perform( post( getBaseUri().build(Collections.singletonMap("cnpj", customerCnpj)) )
-	    		.contentType( MediaType.APPLICATION_JSON )
-	    		.content( mapper.writeValueAsString(request) ))
-        			.andExpect( status().isCreated() )
-        			.andExpect( jsonPath("$").exists() )
-        			.andExpect( jsonPath("$.number").value(contractNumber) )
-        			.andExpect( jsonPath("$.service.id").value(serviceId) )
-        			.andExpect( jsonPath("$.customer.cnpj").value(customerCnpj) )
-        			.andReturn()
-        			.getResponse()
-        			.getContentAsString();
-
-        return mapper.readValue(contentAsString, getResponseClass() );
 
 	}
 
