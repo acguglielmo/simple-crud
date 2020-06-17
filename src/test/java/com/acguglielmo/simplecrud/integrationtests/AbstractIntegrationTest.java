@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -101,9 +102,10 @@ public abstract class AbstractIntegrationTest<T, Y> {
 
     protected Y create(final String fixtureName) throws Exception {
 
-		final T request = Fixture.from( getRequestClass() ).gimme(fixtureName);
+    	final T request = getSpecificRequestObjectBeforeCreate()
+    		.orElse( Fixture.from( getRequestClass() ).gimme( fixtureName ) );
 
-        final String contentAsString = mockMvc.perform( post( getBaseUri().build().toUri() )
+        final String contentAsString = mockMvc.perform( post( getPostUri() )
 	    		.contentType( MediaType.APPLICATION_JSON )
 	    		.content( mapper.writeValueAsString(request) )
 	    	).andExpect(status().isCreated())
@@ -115,7 +117,8 @@ public abstract class AbstractIntegrationTest<T, Y> {
 
     }
 
-    public static void main(String[] args) {
+
+	public static void main(String[] args) {
 
     	Map<String, Object> uriVariables = new HashMap<>();
     	uriVariables.put("cnpj", "03966583000106");
@@ -165,6 +168,18 @@ public abstract class AbstractIntegrationTest<T, Y> {
         mockMvc.perform( MockMvcRequestBuilders.delete(getResourceUri().build(uriVariables) ))
 	    	.andExpect( status().isNoContent() )
 	    	.andExpect( jsonPath("$").doesNotExist() );
+
+	}
+
+	protected Optional<T> getSpecificRequestObjectBeforeCreate() {
+
+		return Optional.empty();
+
+	};
+
+	protected URI getPostUri() {
+
+		return getBaseUri().build().toUri();
 
 	}
 
