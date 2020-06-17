@@ -52,13 +52,11 @@ public class ContractService {
 
 		final Customer customer = findCustomer(customerCnpj);
 
-		final ContractId contractId = new ContractId(request.getNumber(), customer);
+		final Service service = findService(request);
 
-		checkIfContractAlredyExists( contractId );
+		final Contract contract = mapper.buildFrom(customer, service, request);
 
-		final Contract contract = new Contract( contractId );
-
-		contract.setService( findService(request) );
+		checkIfContractAlreadyExists( contract.getId() );
 
 		final Contract savedEntity = repository.save(contract);
 
@@ -107,7 +105,7 @@ public class ContractService {
 			.orElseThrow( () -> new NotFoundException("Service not found!") ) ;
 	}
 
-   private void checkIfContractAlredyExists(final ContractId contractId) {
+   private void checkIfContractAlreadyExists(final ContractId contractId) {
 
        if ( repository.findById( contractId ).isPresent() ) {
 
