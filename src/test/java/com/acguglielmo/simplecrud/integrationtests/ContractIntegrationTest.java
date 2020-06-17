@@ -2,7 +2,6 @@ package com.acguglielmo.simplecrud.integrationtests;
 
 import static java.util.Objects.isNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.web.util.UriComponentsBuilder.fromPath;
 
@@ -19,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.acguglielmo.simplecrud.repository.ContractRepository;
@@ -144,12 +142,6 @@ public class ContractIntegrationTest extends AbstractIntegrationTest<ContractReq
 	protected Class<ContractRequest> getRequestClass() {
 
 		return ContractRequest.class;
-	}
-
-	@Override
-	protected JsonPathResultMatchers resourceIdMatcher() {
-
-		return jsonPath("$.cnpj");
 	}
 
 	@Override

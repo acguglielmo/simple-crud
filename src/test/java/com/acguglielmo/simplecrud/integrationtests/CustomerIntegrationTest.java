@@ -10,7 +10,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.acguglielmo.simplecrud.repository.CustomerRepository;
@@ -79,12 +78,6 @@ public class CustomerIntegrationTest extends AbstractIntegrationTest<CustomerReq
 	protected Class<CustomerRequest> getRequestClass() {
 
 		return CustomerRequest.class;
-	}
-
-	@Override
-	protected JsonPathResultMatchers resourceIdMatcher() {
-
-		return jsonPath("$.cnpj");
 	}
 
 	@Override

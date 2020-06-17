@@ -25,7 +25,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.acguglielmo.simplecrud.SimpleCrudApplication;
@@ -190,8 +189,6 @@ public abstract class AbstractIntegrationTest<T, Y> {
     protected abstract Class<T> getRequestClass();
 
     protected abstract Class<Y> getResponseClass();
-
-    protected abstract JsonPathResultMatchers resourceIdMatcher();
 
     protected abstract void applyCustomActionsAfterUpdate(ResultActions resultActions, T putRequest) throws Exception;
 

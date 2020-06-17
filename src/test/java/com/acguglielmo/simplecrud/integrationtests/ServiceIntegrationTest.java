@@ -10,7 +10,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.acguglielmo.simplecrud.repository.ServiceRepository;
@@ -78,13 +77,6 @@ public class ServiceIntegrationTest extends AbstractIntegrationTest<ServiceReque
 	protected Class<ServiceRequest> getRequestClass() {
 
 		return ServiceRequest.class;
-	}
-
-	@Override
-	protected JsonPathResultMatchers resourceIdMatcher() {
-
-		return jsonPath("$.id") ;
-
 	}
 
 	@Override
