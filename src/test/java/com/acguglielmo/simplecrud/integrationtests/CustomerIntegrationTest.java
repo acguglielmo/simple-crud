@@ -1,12 +1,17 @@
 package com.acguglielmo.simplecrud.integrationtests;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.web.util.UriComponentsBuilder.fromPath;
+
+import java.util.Collections;
+import java.util.Map;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.acguglielmo.simplecrud.repository.CustomerRepository;
 import com.acguglielmo.simplecrud.request.CustomerRequest;
@@ -29,13 +34,15 @@ public class CustomerIntegrationTest extends AbstractIntegrationTest<CustomerReq
 
 		final CustomerResponse customer = super.create("valid");
 
-		super.shouldFind(customer.getCnpj());
+		final Map<String, Object> uriVariables = Collections.singletonMap("cnpj", customer.getCnpj());
 
-		super.update(customer.getCnpj());
+		super.shouldFind( uriVariables );
 
-		super.delete(customer.getCnpj());
+		super.update( uriVariables );
 
-		super.shouldNotFind(customer.getCnpj());
+		super.delete( uriVariables );
+
+		super.shouldNotFind( uriVariables );
 
 	}
 
@@ -48,15 +55,15 @@ public class CustomerIntegrationTest extends AbstractIntegrationTest<CustomerReq
 	}
 
 	@Override
-	protected String getBaseUri() {
+	protected UriComponentsBuilder getBaseUri() {
 
-		return "/customers";
+		return fromPath("/customers");
 	}
 
 	@Override
-	protected String getResourceUri() {
+	protected UriComponentsBuilder getResourceUri() {
 
-		return getBaseUri() + "/{id}";
+		return getBaseUri().path("/{cnpj}");
 
 	}
 

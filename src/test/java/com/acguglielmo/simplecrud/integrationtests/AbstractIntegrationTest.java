@@ -9,6 +9,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.acguglielmo.simplecrud.SimpleCrudApplication;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -49,7 +54,7 @@ public abstract class AbstractIntegrationTest<T, Y> {
 
     protected void shouldPerformPaginatedQueryUsingGetTest() throws Exception {
 
-		mockMvc.perform( get( getBaseUri() ) )
+		mockMvc.perform( get( getBaseUri().build().toUri() ) )
 			.andExpect( status().isOk() )
 			.andExpect( jsonPath("$").exists() )
 			.andExpect( jsonPath("$.totalElements").value(0) )
@@ -62,7 +67,7 @@ public abstract class AbstractIntegrationTest<T, Y> {
 
 		}
 
-		mockMvc.perform( get( getBaseUri() ) )
+		mockMvc.perform( get( getBaseUri().build().toUri() ) )
 			.andExpect( status().isOk() )
 			.andExpect( jsonPath("$").exists() )
 			.andExpect( jsonPath("$.totalElements").value(19) )
@@ -70,7 +75,7 @@ public abstract class AbstractIntegrationTest<T, Y> {
 			.andExpect( jsonPath("$.content", is( not( empty() ) ) ) )
 			.andExpect( jsonPath("$.content.size()").value(10) );
 
-		mockMvc.perform( get( getBaseUri() ).queryParam("page", "1") )
+		mockMvc.perform( get( getBaseUri().build().toUri() ).queryParam("page", "1") )
 			.andExpect( status().isOk() )
 			.andExpect( jsonPath("$").exists() )
 			.andExpect( jsonPath("$.totalElements").value(19) )
@@ -78,14 +83,14 @@ public abstract class AbstractIntegrationTest<T, Y> {
 			.andExpect( jsonPath("$.content", is( not( empty() ) ) ) )
 			.andExpect( jsonPath("$.content.size()").value(9) );
 
-		mockMvc.perform( get( getBaseUri() ).queryParam("page", "2") )
+		mockMvc.perform( get( getBaseUri().build().toUri() ).queryParam("page", "2") )
 			.andExpect( status().isOk() )
 			.andExpect( jsonPath("$").exists() )
 			.andExpect( jsonPath("$.totalElements").value(19) )
 			.andExpect( jsonPath("$.content").exists() )
 			.andExpect( jsonPath("$.content", is( empty()  ) ) );
 
-		mockMvc.perform( get( getBaseUri() ).queryParam("page", "0").queryParam("size", "5") )
+		mockMvc.perform( get( getBaseUri().build().toUri() ).queryParam("page", "0").queryParam("size", "5") )
 			.andExpect( status().isOk() )
 			.andExpect( jsonPath("$").exists() )
 			.andExpect( jsonPath("$.totalElements").value(19) )
@@ -98,7 +103,7 @@ public abstract class AbstractIntegrationTest<T, Y> {
 
 		final T request = Fixture.from( getRequestClass() ).gimme(fixtureName);
 
-        final String contentAsString = mockMvc.perform( post( getBaseUri() )
+        final String contentAsString = mockMvc.perform( post( getBaseUri().build().toUri() )
 	    		.contentType( MediaType.APPLICATION_JSON )
 	    		.content( mapper.writeValueAsString(request) )
 	    	).andExpect(status().isCreated())
@@ -110,50 +115,62 @@ public abstract class AbstractIntegrationTest<T, Y> {
 
     }
 
-	protected void shouldFind(final Object resourceId, final Object... resourceIds) throws Exception {
+    public static void main(String[] args) {
 
-        mockMvc.perform( get(getResourceUri(), resourceId, resourceIds ) )
-	        .andExpect( status().isOk() )
-	        .andExpect( jsonPath("$").exists() )
-	        .andExpect( resourceIdMatcher().value( resourceId ) );
+    	Map<String, Object> uriVariables = new HashMap<>();
+    	uriVariables.put("cnpj", "03966583000106");
+    	uriVariables.put("number", 15454545);
+
+    	URI uri = UriComponentsBuilder.fromPath("/customers/{cnpj}/contracts/{number}").build(uriVariables);
+
+    	System.out.println(uri);
 
 	}
 
-	protected void shouldNotFind(final Object resourceId, final Object... resourceIds) throws Exception {
+	protected void shouldFind(final Map<String, Object> uriVariables) throws Exception {
 
-		mockMvc.perform( get(getResourceUri(), resourceId, resourceIds ) )
+		mockMvc.perform( get( getResourceUri().build(uriVariables) ) )
+	        .andExpect( status().isOk() )
+	        .andExpect( jsonPath("$").exists() );
+	        //.andExpect( resourceIdMatcher().value( resourceId ) );
+
+	}
+
+	protected void shouldNotFind(final Map<String, Object> uriVariables) throws Exception {
+
+		mockMvc.perform( get( getResourceUri().build(uriVariables) ) )
 	        .andExpect( status().isNotFound() )
 	        .andExpect( jsonPath("$").doesNotExist() );
 
 	}
 
-	protected void update(final Object resourceId, final Object... resourceIds) throws Exception {
+	protected void update(final Map<String, Object> uriVariables) throws Exception {
 
 		final T request = Fixture.from( getRequestClass() ).gimme("updating");
 
-        final ResultActions resultActions = mockMvc.perform( put(getResourceUri(), resourceId, resourceIds )
+        final ResultActions resultActions = mockMvc.perform( put(getResourceUri().build(uriVariables) )
 				.contentType( MediaType.APPLICATION_JSON )
 				.content( mapper.writeValueAsString(request) )
 	    	).andExpect(status().isOk())
-	    	.andExpect( jsonPath("$").exists() )
-	    	.andExpect( resourceIdMatcher().value( resourceId ) );
+	    	.andExpect( jsonPath("$").exists() );
+	    	//.andExpect( resourceIdMatcher().value( resourceId ) );
 
         applyCustomActionsAfterUpdate(resultActions, request );
 
 	}
 
 
-	protected void delete(final Object resourceId, final Object... resourceIds) throws Exception {
+	protected void delete(final Map<String, Object> uriVariables) throws Exception {
 
-        mockMvc.perform( MockMvcRequestBuilders.delete(getResourceUri(), resourceId, resourceIds ))
+        mockMvc.perform( MockMvcRequestBuilders.delete(getResourceUri().build(uriVariables) ))
 	    	.andExpect( status().isNoContent() )
 	    	.andExpect( jsonPath("$").doesNotExist() );
 
 	}
 
-    protected abstract String getBaseUri();
+    protected abstract UriComponentsBuilder getBaseUri();
 
-    protected abstract String getResourceUri();
+    protected abstract UriComponentsBuilder getResourceUri();
 
     protected abstract Class<T> getRequestClass();
 

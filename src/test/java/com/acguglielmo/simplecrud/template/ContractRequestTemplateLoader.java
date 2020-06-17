@@ -12,6 +12,17 @@ public class ContractRequestTemplateLoader implements TemplateLoader {
 	public void load() {
 
 		Fixture.of( ContractRequest.class ).addTemplate("valid", new Rule() {{
+			add("number", "number-909");
+			add("serviceId", 1L);
+		}});
+
+		Fixture.of( ContractRequest.class ).addTemplate("updating", new Rule() {{
+			add("number", "123456789");
+			add("serviceId", 1L);
+		}});
+
+		Fixture.of( ContractRequest.class ).addTemplate("random info", new Rule() {{
+			add("number", uniqueRandom("customer A", "customer B", "customer C", "customer D")  );
 			add("serviceId", 1L);
 		}});
 

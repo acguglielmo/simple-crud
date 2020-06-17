@@ -1,11 +1,16 @@
 package com.acguglielmo.simplecrud.integrationtests;
 
-import static java.lang.String.format;
 import static java.util.Objects.isNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.web.util.UriComponentsBuilder.fromPath;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.lang.RandomStringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -14,12 +19,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import com.acguglielmo.simplecrud.repository.ContractRepository;
 import com.acguglielmo.simplecrud.repository.CustomerRepository;
+import com.acguglielmo.simplecrud.repository.ServiceRepository;
 import com.acguglielmo.simplecrud.request.ContractRequest;
 import com.acguglielmo.simplecrud.request.CustomerRequest;
+import com.acguglielmo.simplecrud.request.ServiceRequest;
 import com.acguglielmo.simplecrud.response.ContractResponse;
 import com.acguglielmo.simplecrud.response.CustomerResponse;
+import com.acguglielmo.simplecrud.response.ServiceResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.six2six.fixturefactory.Fixture;
@@ -28,9 +38,17 @@ import br.com.six2six.fixturefactory.Fixture;
 public class ContractIntegrationTest extends AbstractIntegrationTest<ContractRequest, ContractResponse> {
 
     @Autowired
-    private CustomerRepository repository;
+    private CustomerRepository customerRepository;
+
+    @Autowired
+    private ServiceRepository serviceRepository;
+
+    @Autowired
+    private ContractRepository contractRepository;
 
     private String customerCnpj;
+
+    private Long serviceId;
 
 	@BeforeEach
     public void setupBeforeTests() throws Exception {
@@ -39,29 +57,41 @@ public class ContractIntegrationTest extends AbstractIntegrationTest<ContractReq
 
     	createCustomerCnpjIfNull();
 
+    	createServiceIdIfNull();
+
     }
 
 	@AfterEach
     public void cleanUp() {
 
-    	repository.deleteAll();
+    	contractRepository.deleteAll();
+
+    	serviceRepository.deleteAll();
+
+    	customerRepository.deleteAll();
 
     }
 
 	@Test
 	public void shouldPerformCrudActionsAccordingToAssertionsTest() throws Exception {
 
-		final ContractResponse contract = super.create("valid");
+		final ContractResponse contract = createContract();
 
-		super.shouldFind( contract.getCustomer().getCnpj(), contract.getNumber() );
+		final Map<String, Object> uriVariables = new HashMap<>();
+		uriVariables.put("cnpj", customerCnpj);
+		uriVariables.put("number", contract.getNumber());
 
-		super.update( contract.getCustomer().getCnpj(), contract.getNumber() );
+		super.shouldFind( uriVariables );
 
-		super.delete( contract.getCustomer().getCnpj(), contract.getNumber() );
+		super.update( uriVariables );
 
-		super.shouldNotFind( contract.getCustomer().getCnpj(), contract.getNumber());
+		super.delete( uriVariables );
+
+		super.shouldNotFind( uriVariables );
 
 	}
+
+
 
 	@Test
 	@Override
@@ -72,15 +102,15 @@ public class ContractIntegrationTest extends AbstractIntegrationTest<ContractReq
 	}
 
 	@Override
-	protected String getBaseUri() {
+	protected UriComponentsBuilder getBaseUri() {
 
-		return format("/customers/%s/contracts", customerCnpj);
+		return fromPath("/customers/{cnpj}/contracts");
 	}
 
 	@Override
-	protected String getResourceUri() {
+	protected UriComponentsBuilder getResourceUri() {
 
-		return getBaseUri() + "/{number}";
+		return getBaseUri().path("/{number}");
 
 	}
 
@@ -110,6 +140,31 @@ public class ContractIntegrationTest extends AbstractIntegrationTest<ContractReq
 
 	}
 
+	private ContractResponse createContract() throws Exception {
+
+		final String contractNumber = RandomStringUtils.randomAlphanumeric(10);
+
+		final ContractRequest request = new ContractRequest();
+		request.setServiceId(serviceId);
+		request.setNumber( contractNumber );
+
+        final String contentAsString =
+        	mockMvc.perform( post( getBaseUri().build(Collections.singletonMap("cnpj", customerCnpj)) )
+	    		.contentType( MediaType.APPLICATION_JSON )
+	    		.content( mapper.writeValueAsString(request) ))
+        			.andExpect( status().isCreated() )
+        			.andExpect( jsonPath("$").exists() )
+        			.andExpect( jsonPath("$.number").value(contractNumber) )
+        			.andExpect( jsonPath("$.service.id").value(serviceId) )
+        			.andExpect( jsonPath("$.customer.cnpj").value(customerCnpj) )
+        			.andReturn()
+        			.getResponse()
+        			.getContentAsString();
+
+        return mapper.readValue(contentAsString, getResponseClass() );
+
+	}
+
 	private void createCustomerCnpjIfNull() throws Exception {
 
 		if ( isNull(customerCnpj) ) {
@@ -123,6 +178,24 @@ public class ContractIntegrationTest extends AbstractIntegrationTest<ContractReq
 					.getContentAsString();
 
 			customerCnpj = mapper.readValue(contentAsString, CustomerResponse.class ).getCnpj();
+
+		}
+
+	}
+
+	private void createServiceIdIfNull() throws Exception {
+
+		if ( isNull(serviceId) ) {
+
+			final String contentAsString = mockMvc.perform( post( "/services" )
+				.contentType( MediaType.APPLICATION_JSON )
+				.content( new ObjectMapper().writeValueAsString(Fixture.from( ServiceRequest.class ).gimme("random info")) ))
+					.andExpect(status().isCreated())
+					.andReturn()
+					.getResponse()
+					.getContentAsString();
+
+			serviceId = mapper.readValue(contentAsString, ServiceResponse.class).getId();
 
 		}
 

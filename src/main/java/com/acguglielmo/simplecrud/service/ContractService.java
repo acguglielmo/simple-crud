@@ -50,7 +50,7 @@ public class ContractService {
 
 		final Customer customer = findCustomer(customerCnpj);
 
-		final Contract contract = new Contract( new ContractId("a number", customer) );
+		final Contract contract = new Contract( new ContractId(request.getNumber(), customer) );
 
 		contract.setService( findService(request) );
 
