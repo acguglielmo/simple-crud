@@ -10,7 +10,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.net.URI;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -115,19 +114,6 @@ public abstract class AbstractIntegrationTest<T, Y> {
         return mapper.readValue(contentAsString, getResponseClass() );
 
     }
-
-
-	public static void main(String[] args) {
-
-    	Map<String, Object> uriVariables = new HashMap<>();
-    	uriVariables.put("cnpj", "03966583000106");
-    	uriVariables.put("number", 15454545);
-
-    	URI uri = UriComponentsBuilder.fromPath("/customers/{cnpj}/contracts/{number}").build(uriVariables);
-
-    	System.out.println(uri);
-
-	}
 
 	protected void shouldFind(final Map<String, Object> uriVariables) throws Exception {
 
