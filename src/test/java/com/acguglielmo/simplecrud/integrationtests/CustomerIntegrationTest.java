@@ -31,15 +31,15 @@ public class CustomerIntegrationTest extends AbstractIntegrationTest<CustomerReq
 	@Test
 	public void shouldPerformCrudActionsAccordingToAssertionsTest() throws Exception {
 
-		final CustomerResponse customer = super.create("valid");
+		final CustomerResponse customer = super.shouldCreate("valid");
 
 		final Map<String, Object> uriVariables = Collections.singletonMap("cnpj", customer.getCnpj());
 
 		super.shouldFind( uriVariables );
 
-		super.update( uriVariables );
+		super.shouldUpdate( uriVariables );
 
-		super.delete( uriVariables );
+		super.shouldDelete( uriVariables );
 
 		super.shouldNotFind( uriVariables );
 

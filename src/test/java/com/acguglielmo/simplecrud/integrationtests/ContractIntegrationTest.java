@@ -77,7 +77,7 @@ public class ContractIntegrationTest extends AbstractIntegrationTest<ContractReq
 	@Test
 	public void shouldPerformCrudActionsAccordingToAssertionsTest() throws Exception {
 
-		final ContractResponse contract = create("valid");
+		final ContractResponse contract = shouldCreate("valid");
 
 		final Map<String, Object> uriVariables = new HashMap<>();
 		uriVariables.put("cnpj", customerCnpj);
@@ -85,9 +85,9 @@ public class ContractIntegrationTest extends AbstractIntegrationTest<ContractReq
 
 		super.shouldFind( uriVariables );
 
-		super.update( uriVariables );
+		super.shouldUpdate( uriVariables );
 
-		super.delete( uriVariables );
+		super.shouldDelete( uriVariables );
 
 		super.shouldNotFind( uriVariables );
 

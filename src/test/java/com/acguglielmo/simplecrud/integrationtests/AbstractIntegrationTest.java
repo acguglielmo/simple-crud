@@ -63,7 +63,7 @@ public abstract class AbstractIntegrationTest<T, Y> {
 
 		for (int i = 0; i < 19; i++ ) {
 
-			create("random info");
+			shouldCreate("random info");
 
 		}
 
@@ -99,7 +99,7 @@ public abstract class AbstractIntegrationTest<T, Y> {
 
 	}
 
-    protected Y create(final String fixtureName) throws Exception {
+    protected Y shouldCreate(final String fixtureName) throws Exception {
 
     	final T request = getSpecificRequestObjectBeforeCreateOrUpdate()
     		.orElse( Fixture.from( getRequestClass() ).gimme( fixtureName ) );
@@ -146,7 +146,7 @@ public abstract class AbstractIntegrationTest<T, Y> {
 
 	}
 
-	protected void update(final Map<String, Object> uriVariables) throws Exception {
+	protected void shouldUpdate(final Map<String, Object> uriVariables) throws Exception {
 
     	final T request = getSpecificRequestObjectBeforeCreateOrUpdate()
         	.orElse(Fixture.from( getRequestClass() ).gimme("updating") );
@@ -163,7 +163,7 @@ public abstract class AbstractIntegrationTest<T, Y> {
 	}
 
 
-	protected void delete(final Map<String, Object> uriVariables) throws Exception {
+	protected void shouldDelete(final Map<String, Object> uriVariables) throws Exception {
 
         mockMvc.perform( MockMvcRequestBuilders.delete(getResourceUri().build(uriVariables) ))
 	    	.andExpect( status().isNoContent() )

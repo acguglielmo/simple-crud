@@ -31,15 +31,15 @@ public class ServiceIntegrationTest extends AbstractIntegrationTest<ServiceReque
 	@Test
 	public void shouldPerformCrudActionsAccordingToAssertionsTest() throws Exception {
 
-		final ServiceResponse service = super.create("valid");
+		final ServiceResponse service = super.shouldCreate("valid");
 
 		final Map<String, Object> uriVariables = Collections.singletonMap("id", service.getId() );
 
 		super.shouldFind( uriVariables );
 
-		super.update( uriVariables );
+		super.shouldUpdate( uriVariables );
 
-		super.delete( uriVariables );
+		super.shouldDelete( uriVariables );
 
 		super.shouldNotFind( uriVariables );
 
