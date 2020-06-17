@@ -19,8 +19,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     }
 
-    @ExceptionHandler(value = CustomerNotFoundException.class)
-    protected ResponseEntity<String> handle(CustomerNotFoundException ex) {
+    @ExceptionHandler(value = NotFoundException.class)
+    protected ResponseEntity<String> handle(NotFoundException ex) {
 
     	return ResponseEntity
     		.status(HttpStatus.BAD_REQUEST)
@@ -28,17 +28,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     }
 
-    @ExceptionHandler(value = ServiceNotFoundException.class)
-    protected ResponseEntity<String> handle(ServiceNotFoundException ex) {
-
-    	return ResponseEntity
-    		.status(HttpStatus.BAD_REQUEST)
-    		.body( ex.getMessage() );
-
-    }
-
-    @ExceptionHandler(value = ContractAlreadyExistsException.class)
-    protected ResponseEntity<String> handle(ContractAlreadyExistsException ex) {
+    @ExceptionHandler(value = EntityAlreadyExistsException.class)
+    protected ResponseEntity<String> handle(EntityAlreadyExistsException ex) {
 
         return ResponseEntity
             .status(HttpStatus.CONFLICT)

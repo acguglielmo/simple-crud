@@ -10,9 +10,8 @@ import com.acguglielmo.simplecrud.entity.Contract;
 import com.acguglielmo.simplecrud.entity.ContractId;
 import com.acguglielmo.simplecrud.entity.Customer;
 import com.acguglielmo.simplecrud.entity.Service;
-import com.acguglielmo.simplecrud.exception.ContractAlreadyExistsException;
-import com.acguglielmo.simplecrud.exception.CustomerNotFoundException;
-import com.acguglielmo.simplecrud.exception.ServiceNotFoundException;
+import com.acguglielmo.simplecrud.exception.EntityAlreadyExistsException;
+import com.acguglielmo.simplecrud.exception.NotFoundException;
 import com.acguglielmo.simplecrud.mapper.ContractMapper;
 import com.acguglielmo.simplecrud.repository.ContractRepository;
 import com.acguglielmo.simplecrud.repository.CustomerRepository;
@@ -99,20 +98,20 @@ public class ContractService {
 	private Customer findCustomer(final String cnpj) {
 
 		return customerRepository.findById( cnpj )
-			.orElseThrow( CustomerNotFoundException::new ) ;
+			.orElseThrow( () -> new NotFoundException("Customer not found!") ) ;
 	}
 
 	private Service findService(final ContractRequest request) {
 
 		return serviceRepository.findById(request.getServiceId() )
-			.orElseThrow( ServiceNotFoundException::new ) ;
+			.orElseThrow( () -> new NotFoundException("Service not found!") ) ;
 	}
 
    private void checkIfContractAlredyExists(final ContractId contractId) {
 
        if ( repository.findById( contractId ).isPresent() ) {
 
-           throw new ContractAlreadyExistsException();
+           throw new EntityAlreadyExistsException("Contract already exists!");
 
        }
 
