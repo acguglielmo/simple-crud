@@ -37,4 +37,13 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     }
 
+    @ExceptionHandler(value = ContractAlreadyExistsException.class)
+    protected ResponseEntity<String> handle(ContractAlreadyExistsException ex) {
+
+        return ResponseEntity
+            .status(HttpStatus.CONFLICT)
+            .body( ex.getMessage() );
+
+    }
+
 }

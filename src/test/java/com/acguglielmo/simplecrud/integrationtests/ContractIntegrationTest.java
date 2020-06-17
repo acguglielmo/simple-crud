@@ -2,6 +2,7 @@ package com.acguglielmo.simplecrud.integrationtests;
 
 import static java.util.Objects.isNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.web.util.UriComponentsBuilder.fromPath;
 
@@ -93,13 +94,66 @@ public class ContractIntegrationTest extends AbstractIntegrationTest<ContractReq
 
 	}
 
-
-
 	@Test
 	@Override
 	public void shouldPerformPaginatedQueryUsingGetTest() throws Exception {
 
 		super.shouldPerformPaginatedQueryUsingGetTest();
+
+	}
+
+	@Test
+	public void shouldReturnHttp400BadRequestWhenCreatingContractWithNonExistentCustomerTest() throws Exception {
+
+	    final ContractRequest request = new ContractRequest();
+	    request.setServiceId( serviceId );
+
+	    mockMvc.perform( post( "/customers/0000000000000/contracts" )
+                .contentType( MediaType.APPLICATION_JSON )
+                .content( new ObjectMapper().writeValueAsString( request ) ) )
+            .andExpect(status().isBadRequest() )
+            .andExpect( jsonPath("$").exists() )
+            .andExpect( jsonPath("$").value("Customer not found!") );
+
+	}
+
+	@Test
+    public void shouldReturnHttp400BadRequestWhenCreatingContractWithNonExistentServiceTest() throws Exception {
+
+        final ContractRequest request = new ContractRequest();
+        request.setServiceId( 99965L );
+        request.setNumber( RandomStringUtils.randomAlphanumeric(10) );
+
+        mockMvc.perform( post( getPostUri() )
+                .contentType( MediaType.APPLICATION_JSON )
+                .content( new ObjectMapper().writeValueAsString( request ) ) )
+            .andExpect(status().isBadRequest() )
+            .andExpect( jsonPath("$").exists() )
+            .andExpect( jsonPath("$").value("Service not found!") );
+
+    }
+
+	@Test
+    public void shouldReturnHttp409ConflictWhenCreatingContractWithSameNumberToTheSameCustomerTest() throws Exception {
+
+	    final String contractNumber = RandomStringUtils.randomAlphanumeric(10);
+
+	    final ContractRequest request = new ContractRequest();
+        request.setServiceId( serviceId );
+        request.setNumber( contractNumber );
+
+        mockMvc.perform( post( getPostUri() )
+                .contentType( MediaType.APPLICATION_JSON )
+                .content( new ObjectMapper().writeValueAsString( request ) ) )
+            .andExpect(status().isCreated() )
+            .andExpect( jsonPath("$").exists() );
+
+        mockMvc.perform( post( getPostUri() )
+                .contentType( MediaType.APPLICATION_JSON )
+                .content( new ObjectMapper().writeValueAsString( request ) ) )
+            .andExpect(status().isConflict() )
+            .andExpect( jsonPath("$").exists() )
+            .andExpect( jsonPath("$").value("Contract already exists!") );
 
 	}
 
