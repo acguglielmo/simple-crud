@@ -11,4 +11,6 @@ public class ContractResponse {
 
 	private ServiceResponse service;
 
+	private TermResponse term;
+
 }

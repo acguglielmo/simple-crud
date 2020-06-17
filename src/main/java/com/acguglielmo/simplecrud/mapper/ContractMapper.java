@@ -8,7 +8,11 @@ import com.acguglielmo.simplecrud.response.ContractResponse;
 
 @Mapper(
 	componentModel = "spring",
-	uses = { CustomerMapper.class, ServiceMapper.class })
+	uses = {
+		CustomerMapper.class,
+		ServiceMapper.class,
+		TermMapper.class
+})
 public interface ContractMapper {
 
 	@Mapping(source = "id.number", target = "number")
