@@ -38,7 +38,9 @@ import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader;
 @ContextConfiguration(classes = SimpleCrudApplication.class)
 public abstract class AbstractIntegrationTest<T, Y> {
 
-    @Autowired
+    public static final int NUMBER_OF_ELEMENTS = 19;
+
+	@Autowired
     protected ObjectMapper mapper;
 
 	@Autowired
@@ -60,7 +62,7 @@ public abstract class AbstractIntegrationTest<T, Y> {
 			.andExpect( jsonPath("$.content").exists() )
 			.andExpect( jsonPath("$.content", is( empty() )) );
 
-		for (int i = 0; i < 19; i++ ) {
+		for (int i = 0; i < NUMBER_OF_ELEMENTS; i++ ) {
 
 			shouldCreate("random info");
 

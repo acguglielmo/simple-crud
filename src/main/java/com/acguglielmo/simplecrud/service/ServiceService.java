@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.acguglielmo.simplecrud.entity.Service;
+import com.acguglielmo.simplecrud.exception.EntityAlreadyExistsException;
 import com.acguglielmo.simplecrud.mapper.ServiceMapper;
 import com.acguglielmo.simplecrud.repository.ServiceRepository;
 import com.acguglielmo.simplecrud.request.ServiceRequest;
@@ -36,6 +37,8 @@ public class ServiceService {
 	}
 
 	public ServiceResponse create(final ServiceRequest request) {
+
+		checkIfServiceAlreadyExists( request.getName() );
 
 		final Service savedEntity = repository.save( mapper.fromRequest(request) );
 
@@ -70,5 +73,15 @@ public class ServiceService {
 			.orElse( false );
 
 	}
+
+	private void checkIfServiceAlreadyExists(final String name) {
+
+	   if ( repository.findByName( name ).isPresent() ) {
+
+	       throw new EntityAlreadyExistsException("Service already exists!");
+
+	   }
+
+    }
 
 }

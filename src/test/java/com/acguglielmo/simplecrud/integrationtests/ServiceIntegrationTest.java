@@ -1,6 +1,8 @@
 package com.acguglielmo.simplecrud.integrationtests;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.web.util.UriComponentsBuilder.fromPath;
 
 import java.util.Collections;
@@ -9,12 +11,16 @@ import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.acguglielmo.simplecrud.repository.ServiceRepository;
 import com.acguglielmo.simplecrud.request.ServiceRequest;
 import com.acguglielmo.simplecrud.response.ServiceResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import br.com.six2six.fixturefactory.Fixture;
 
 public class ServiceIntegrationTest extends AbstractIntegrationTest<ServiceRequest, ServiceResponse> {
 
@@ -50,6 +56,26 @@ public class ServiceIntegrationTest extends AbstractIntegrationTest<ServiceReque
 	public void shouldPerformPaginatedQueryUsingGetTest() throws Exception {
 
 		super.shouldPerformPaginatedQueryUsingGetTest();
+
+	}
+
+	@Test
+    public void shouldReturnHttp409ConflictWhenCreatingServiceWithSameCnpjTest() throws Exception {
+
+	    final ServiceRequest request = Fixture.from( ServiceRequest.class ).gimme( "valid" );
+
+        mockMvc.perform( post( getBaseUri().build().toUri() )
+                .contentType( MediaType.APPLICATION_JSON )
+                .content( new ObjectMapper().writeValueAsString( request ) ) )
+            .andExpect(status().isCreated() )
+            .andExpect( jsonPath("$").exists() );
+
+        mockMvc.perform( post( getBaseUri().build().toUri() )
+                .contentType( MediaType.APPLICATION_JSON )
+                .content( new ObjectMapper().writeValueAsString( request ) ) )
+            .andExpect(status().isConflict() )
+            .andExpect( jsonPath("$").exists() )
+            .andExpect( jsonPath("$").value("Service already exists!") );
 
 	}
 
