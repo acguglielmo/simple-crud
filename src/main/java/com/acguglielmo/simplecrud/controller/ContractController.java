@@ -31,9 +31,10 @@ public class ContractController {
 
 	@GetMapping
 	public ResponseEntity<Page<ContractResponse>> findAll(
+		@PathVariable final String cnpj,
 		@PageableDefault final Pageable pageable) {
 
-		return ResponseEntity.ok( contractService.findAll(pageable) );
+		return ResponseEntity.ok( contractService.findAll(cnpj, pageable) );
 
 	}
 

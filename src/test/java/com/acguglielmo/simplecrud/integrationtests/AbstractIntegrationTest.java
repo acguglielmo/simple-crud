@@ -10,7 +10,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.net.URI;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -39,7 +38,9 @@ import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader;
 @ContextConfiguration(classes = SimpleCrudApplication.class)
 public abstract class AbstractIntegrationTest<T, Y> {
 
-    @Autowired
+    public static final int NUMBER_OF_ELEMENTS = 19;
+
+	@Autowired
     protected ObjectMapper mapper;
 
 	@Autowired
@@ -54,20 +55,20 @@ public abstract class AbstractIntegrationTest<T, Y> {
 
     protected void shouldPerformPaginatedQueryUsingGetTest() throws Exception {
 
-		mockMvc.perform( get( getBaseUri().build().toUri() ) )
+		mockMvc.perform( get( getBaseUri() ) )
 			.andExpect( status().isOk() )
 			.andExpect( jsonPath("$").exists() )
 			.andExpect( jsonPath("$.totalElements").value(0) )
 			.andExpect( jsonPath("$.content").exists() )
 			.andExpect( jsonPath("$.content", is( empty() )) );
 
-		for (int i = 0; i < 19; i++ ) {
+		for (int i = 0; i < NUMBER_OF_ELEMENTS; i++ ) {
 
-			create("random info");
+			shouldCreate("random info");
 
 		}
 
-		mockMvc.perform( get( getBaseUri().build().toUri() ) )
+		mockMvc.perform( get( getBaseUri() ) )
 			.andExpect( status().isOk() )
 			.andExpect( jsonPath("$").exists() )
 			.andExpect( jsonPath("$.totalElements").value(19) )
@@ -75,7 +76,7 @@ public abstract class AbstractIntegrationTest<T, Y> {
 			.andExpect( jsonPath("$.content", is( not( empty() ) ) ) )
 			.andExpect( jsonPath("$.content.size()").value(10) );
 
-		mockMvc.perform( get( getBaseUri().build().toUri() ).queryParam("page", "1") )
+		mockMvc.perform( get( getBaseUri() ).queryParam("page", "1") )
 			.andExpect( status().isOk() )
 			.andExpect( jsonPath("$").exists() )
 			.andExpect( jsonPath("$.totalElements").value(19) )
@@ -83,14 +84,14 @@ public abstract class AbstractIntegrationTest<T, Y> {
 			.andExpect( jsonPath("$.content", is( not( empty() ) ) ) )
 			.andExpect( jsonPath("$.content.size()").value(9) );
 
-		mockMvc.perform( get( getBaseUri().build().toUri() ).queryParam("page", "2") )
+		mockMvc.perform( get( getBaseUri() ).queryParam("page", "2") )
 			.andExpect( status().isOk() )
 			.andExpect( jsonPath("$").exists() )
 			.andExpect( jsonPath("$.totalElements").value(19) )
 			.andExpect( jsonPath("$.content").exists() )
 			.andExpect( jsonPath("$.content", is( empty()  ) ) );
 
-		mockMvc.perform( get( getBaseUri().build().toUri() ).queryParam("page", "0").queryParam("size", "5") )
+		mockMvc.perform( get( getBaseUri() ).queryParam("page", "0").queryParam("size", "5") )
 			.andExpect( status().isOk() )
 			.andExpect( jsonPath("$").exists() )
 			.andExpect( jsonPath("$.totalElements").value(19) )
@@ -99,35 +100,24 @@ public abstract class AbstractIntegrationTest<T, Y> {
 
 	}
 
-    protected Y create(final String fixtureName) throws Exception {
+    protected Y shouldCreate(final String fixtureName) throws Exception {
 
     	final T request = getSpecificRequestObjectBeforeCreateOrUpdate()
     		.orElse( Fixture.from( getRequestClass() ).gimme( fixtureName ) );
 
-        final String contentAsString = mockMvc.perform( post( getPostUri() )
+        final ResultActions result = mockMvc.perform( post( getBaseUri() )
 	    		.contentType( MediaType.APPLICATION_JSON )
 	    		.content( mapper.writeValueAsString(request) )
-	    	).andExpect(status().isCreated())
-	        .andReturn()
-	        .getResponse()
-	        .getContentAsString();
+	    	)
+        	.andExpect(status().isCreated());
 
-        return mapper.readValue(contentAsString, getResponseClass() );
+        applyCustomActionsAfterCreateOrUpdate(result, request);
+
+        final String contentAsString = result.andReturn().getResponse().getContentAsString();
+
+		return mapper.readValue(contentAsString, getResponseClass() );
 
     }
-
-
-	public static void main(String[] args) {
-
-    	Map<String, Object> uriVariables = new HashMap<>();
-    	uriVariables.put("cnpj", "03966583000106");
-    	uriVariables.put("number", 15454545);
-
-    	URI uri = UriComponentsBuilder.fromPath("/customers/{cnpj}/contracts/{number}").build(uriVariables);
-
-    	System.out.println(uri);
-
-	}
 
 	protected void shouldFind(final Map<String, Object> uriVariables) throws Exception {
 
@@ -146,7 +136,7 @@ public abstract class AbstractIntegrationTest<T, Y> {
 
 	}
 
-	protected void update(final Map<String, Object> uriVariables) throws Exception {
+	protected void shouldUpdate(final Map<String, Object> uriVariables) throws Exception {
 
     	final T request = getSpecificRequestObjectBeforeCreateOrUpdate()
         	.orElse(Fixture.from( getRequestClass() ).gimme("updating") );
@@ -156,14 +146,13 @@ public abstract class AbstractIntegrationTest<T, Y> {
 				.content( mapper.writeValueAsString(request) )
 	    	).andExpect(status().isOk())
 	    	.andExpect( jsonPath("$").exists() );
-	    	//.andExpect( resourceIdMatcher().value( resourceId ) );
 
-        applyCustomActionsAfterUpdate(resultActions, request );
+        applyCustomActionsAfterCreateOrUpdate(resultActions, request );
 
 	}
 
 
-	protected void delete(final Map<String, Object> uriVariables) throws Exception {
+	protected void shouldDelete(final Map<String, Object> uriVariables) throws Exception {
 
         mockMvc.perform( MockMvcRequestBuilders.delete(getResourceUri().build(uriVariables) ))
 	    	.andExpect( status().isNoContent() )
@@ -177,20 +166,14 @@ public abstract class AbstractIntegrationTest<T, Y> {
 
 	};
 
-	protected URI getPostUri() {
+	protected abstract URI getBaseUri();
 
-		return getBaseUri().build().toUri();
-
-	}
-
-    protected abstract UriComponentsBuilder getBaseUri();
+	protected void applyCustomActionsAfterCreateOrUpdate(ResultActions resultActions, T postRequest) throws Exception {};
 
     protected abstract UriComponentsBuilder getResourceUri();
 
     protected abstract Class<T> getRequestClass();
 
     protected abstract Class<Y> getResponseClass();
-
-    protected abstract void applyCustomActionsAfterUpdate(ResultActions resultActions, T putRequest) throws Exception;
 
 }

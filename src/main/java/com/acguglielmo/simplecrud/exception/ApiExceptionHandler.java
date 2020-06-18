@@ -4,36 +4,37 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import com.acguglielmo.simplecrud.response.ErrorResponse;
 
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)
-    protected ResponseEntity<String> handleException(RuntimeException ex, WebRequest request) {
+    protected ResponseEntity<ErrorResponse> handleException(RuntimeException ex) {
 
     	return ResponseEntity
     		.status(HttpStatus.INTERNAL_SERVER_ERROR)
-    		.body( ex.getMessage() );
+    		.body( ErrorResponse.builder().message("Internal server error").build()  );
 
     }
 
-    @ExceptionHandler(value = CustomerNotFoundException.class)
-    protected ResponseEntity<String> handle(CustomerNotFoundException ex) {
+    @ExceptionHandler(value = NotFoundException.class)
+    protected ResponseEntity<ErrorResponse> handle(NotFoundException ex) {
 
     	return ResponseEntity
     		.status(HttpStatus.BAD_REQUEST)
-    		.body( ex.getMessage() );
+    		.body( ErrorResponse.builder().message( ex.getMessage() ).build()  );
 
     }
 
-    @ExceptionHandler(value = ServiceNotFoundException.class)
-    protected ResponseEntity<String> handle(ServiceNotFoundException ex) {
+    @ExceptionHandler(value = EntityAlreadyExistsException.class)
+    protected ResponseEntity<ErrorResponse> handle(EntityAlreadyExistsException ex) {
 
-    	return ResponseEntity
-    		.status(HttpStatus.BAD_REQUEST)
-    		.body( ex.getMessage() );
+        return ResponseEntity
+            .status(HttpStatus.CONFLICT)
+            .body( ErrorResponse.builder().message( ex.getMessage() ).build()  );
 
     }
 

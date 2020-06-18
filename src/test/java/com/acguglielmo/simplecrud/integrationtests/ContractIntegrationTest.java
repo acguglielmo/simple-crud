@@ -2,6 +2,7 @@ package com.acguglielmo.simplecrud.integrationtests;
 
 import static java.util.Objects.isNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.web.util.UriComponentsBuilder.fromPath;
 
@@ -26,6 +27,7 @@ import com.acguglielmo.simplecrud.repository.ServiceRepository;
 import com.acguglielmo.simplecrud.request.ContractRequest;
 import com.acguglielmo.simplecrud.request.CustomerRequest;
 import com.acguglielmo.simplecrud.request.ServiceRequest;
+import com.acguglielmo.simplecrud.request.TermRequest;
 import com.acguglielmo.simplecrud.response.ContractResponse;
 import com.acguglielmo.simplecrud.response.CustomerResponse;
 import com.acguglielmo.simplecrud.response.ServiceResponse;
@@ -77,7 +79,7 @@ public class ContractIntegrationTest extends AbstractIntegrationTest<ContractReq
 	@Test
 	public void shouldPerformCrudActionsAccordingToAssertionsTest() throws Exception {
 
-		final ContractResponse contract = create("valid");
+		final ContractResponse contract = shouldCreate("valid");
 
 		final Map<String, Object> uriVariables = new HashMap<>();
 		uriVariables.put("cnpj", customerCnpj);
@@ -85,15 +87,13 @@ public class ContractIntegrationTest extends AbstractIntegrationTest<ContractReq
 
 		super.shouldFind( uriVariables );
 
-		super.update( uriVariables );
+		super.shouldUpdate( uriVariables );
 
-		super.delete( uriVariables );
+		super.shouldDelete( uriVariables );
 
 		super.shouldNotFind( uriVariables );
 
 	}
-
-
 
 	@Test
 	@Override
@@ -103,22 +103,78 @@ public class ContractIntegrationTest extends AbstractIntegrationTest<ContractReq
 
 	}
 
-	@Override
-	protected UriComponentsBuilder getBaseUri() {
+	@Test
+	public void shouldReturnHttp400BadRequestWhenCreatingContractWithNonExistentCustomerTest() throws Exception {
 
-		return fromPath("/customers/{cnpj}/contracts");
+	    final ContractRequest request = new ContractRequest();
+	    request.setServiceId( serviceId );
+	    request.setTerm( Fixture.from( TermRequest.class ).gimme("valid") );
+
+	    mockMvc.perform( post( "/customers/0000000000000/contracts" )
+                .contentType( MediaType.APPLICATION_JSON )
+                .content( new ObjectMapper().writeValueAsString( request ) ) )
+            .andExpect(status().isBadRequest() )
+            .andExpect( jsonPath("$").exists() )
+            .andExpect( jsonPath("$.message").exists() )
+            .andExpect( jsonPath("$.message").value("Customer not found!") );
+
+	}
+
+	@Test
+    public void shouldReturnHttp400BadRequestWhenCreatingContractWithNonExistentServiceTest() throws Exception {
+
+        final ContractRequest request = new ContractRequest();
+        request.setServiceId( 99965L );
+        request.setNumber( RandomStringUtils.randomAlphanumeric(10) );
+        request.setTerm( Fixture.from( TermRequest.class ).gimme("valid") );
+
+        mockMvc.perform( post( getBaseUri() )
+                .contentType( MediaType.APPLICATION_JSON )
+                .content( new ObjectMapper().writeValueAsString( request ) ) )
+            .andExpect(status().isBadRequest() )
+            .andExpect( jsonPath("$").exists() )
+            .andExpect( jsonPath("$.message").exists() )
+            .andExpect( jsonPath("$.message").value("Service not found!") );
+
+    }
+
+	@Test
+    public void shouldReturnHttp409ConflictWhenCreatingContractWithSameNumberToTheSameCustomerTest() throws Exception {
+
+	    final String contractNumber = RandomStringUtils.randomAlphanumeric(10);
+
+	    final ContractRequest request = new ContractRequest();
+        request.setServiceId( serviceId );
+        request.setNumber( contractNumber );
+        request.setTerm( Fixture.from( TermRequest.class ).gimme("valid") );
+
+        mockMvc.perform( post( getBaseUri() )
+                .contentType( MediaType.APPLICATION_JSON )
+                .content( new ObjectMapper().writeValueAsString( request ) ) )
+            .andExpect(status().isCreated() )
+            .andExpect( jsonPath("$").exists() );
+
+        mockMvc.perform( post( getBaseUri() )
+                .contentType( MediaType.APPLICATION_JSON )
+                .content( new ObjectMapper().writeValueAsString( request ) ) )
+            .andExpect(status().isConflict() )
+            .andExpect( jsonPath("$").exists() )
+            .andExpect( jsonPath("$.message").exists() )
+            .andExpect( jsonPath("$.message").value("Contract already exists!") );
+
 	}
 
 	@Override
-	protected URI getPostUri() {
+	protected URI getBaseUri() {
 
-		return getBaseUri().build( Collections.singletonMap("cnpj", customerCnpj) );
+		return fromPath("/customers/{cnpj}/contracts")
+			.build( Collections.singletonMap("cnpj", customerCnpj) );
 	}
 
 	@Override
 	protected UriComponentsBuilder getResourceUri() {
 
-		return getBaseUri().path("/{number}");
+		return fromPath("/customers/{cnpj}/contracts").path("/{number}");
 
 	}
 
@@ -130,6 +186,7 @@ public class ContractIntegrationTest extends AbstractIntegrationTest<ContractReq
 		final ContractRequest request = new ContractRequest();
 		request.setServiceId(serviceId);
 		request.setNumber( contractNumber );
+		request.setTerm( Fixture.from( TermRequest.class ).gimme("valid") );
 
 		return Optional.of( request );
 
@@ -149,8 +206,14 @@ public class ContractIntegrationTest extends AbstractIntegrationTest<ContractReq
 	}
 
 	@Override
-    protected void applyCustomActionsAfterUpdate(
+    protected void applyCustomActionsAfterCreateOrUpdate(
     	final ResultActions resultActions, final ContractRequest contractRequest) throws Exception {
+
+		resultActions
+			.andExpect( jsonPath("$").exists() )
+			.andExpect( jsonPath("$.service.id").value( contractRequest.getServiceId() ) )
+			.andExpect( jsonPath("$.term.beggining").value( contractRequest.getTerm().getBeggining() ) )
+			.andExpect( jsonPath("$.term.end").value( contractRequest.getTerm().getEnd() ) );
 
 	}
 

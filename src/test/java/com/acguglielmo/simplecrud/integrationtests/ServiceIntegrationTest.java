@@ -1,20 +1,27 @@
 package com.acguglielmo.simplecrud.integrationtests;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.web.util.UriComponentsBuilder.fromPath;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.acguglielmo.simplecrud.repository.ServiceRepository;
 import com.acguglielmo.simplecrud.request.ServiceRequest;
 import com.acguglielmo.simplecrud.response.ServiceResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import br.com.six2six.fixturefactory.Fixture;
 
 public class ServiceIntegrationTest extends AbstractIntegrationTest<ServiceRequest, ServiceResponse> {
 
@@ -31,15 +38,15 @@ public class ServiceIntegrationTest extends AbstractIntegrationTest<ServiceReque
 	@Test
 	public void shouldPerformCrudActionsAccordingToAssertionsTest() throws Exception {
 
-		final ServiceResponse service = super.create("valid");
+		final ServiceResponse service = super.shouldCreate("valid");
 
 		final Map<String, Object> uriVariables = Collections.singletonMap("id", service.getId() );
 
 		super.shouldFind( uriVariables );
 
-		super.update( uriVariables );
+		super.shouldUpdate( uriVariables );
 
-		super.delete( uriVariables );
+		super.shouldDelete( uriVariables );
 
 		super.shouldNotFind( uriVariables );
 
@@ -53,16 +60,37 @@ public class ServiceIntegrationTest extends AbstractIntegrationTest<ServiceReque
 
 	}
 
-	@Override
-	protected UriComponentsBuilder getBaseUri() {
+	@Test
+    public void shouldReturnHttp409ConflictWhenCreatingServiceWithSameCnpjTest() throws Exception {
 
-		return fromPath("/services");
+	    final ServiceRequest request = Fixture.from( ServiceRequest.class ).gimme( "valid" );
+
+        mockMvc.perform( post( getBaseUri() )
+                .contentType( MediaType.APPLICATION_JSON )
+                .content( new ObjectMapper().writeValueAsString( request ) ) )
+            .andExpect(status().isCreated() )
+            .andExpect( jsonPath("$").exists() );
+
+        mockMvc.perform( post( getBaseUri() )
+                .contentType( MediaType.APPLICATION_JSON )
+                .content( new ObjectMapper().writeValueAsString( request ) ) )
+            .andExpect(status().isConflict() )
+            .andExpect( jsonPath("$").exists() )
+            .andExpect( jsonPath("$.message").exists() )
+            .andExpect( jsonPath("$.message").value("Service already exists!") );
+
+	}
+
+	@Override
+	protected URI getBaseUri() {
+
+		return fromPath("/services").build().toUri();
 	}
 
 	@Override
 	protected UriComponentsBuilder getResourceUri() {
 
-		return getBaseUri().path("/{id}");
+		return fromPath("/services").path("/{id}");
 
 	}
 
@@ -80,7 +108,7 @@ public class ServiceIntegrationTest extends AbstractIntegrationTest<ServiceReque
 	}
 
 	@Override
-    protected void applyCustomActionsAfterUpdate(
+    protected void applyCustomActionsAfterCreateOrUpdate(
     	final ResultActions resultActions, final ServiceRequest serviceRequest) throws Exception {
 
 		resultActions.andExpect(
