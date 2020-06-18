@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>com.acguglielmo</groupId>
 	<artifactId>simple-crud</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>simple-crud</name>
 	<description>Simple CRUD project in Spring Boot</description>
 
