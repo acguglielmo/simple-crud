@@ -7,6 +7,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -74,12 +75,12 @@ public class ContractServiceTest {
 	@Test
 	public void shouldReturnPageWithContractsTest() {
 
-		when( repository.findAll( any(Pageable.class) ) )
+		when( repository.findAllByIdCustomerCnpj( eq("34492352000123"),  any(Pageable.class) ) )
 			.thenReturn( new PageImpl<>( Fixture.from( Contract.class ).gimme(1, "valid") ) );
 
 		final Pageable pageable = PageRequest.of(0, 10);
 
-		final Page<ContractResponse> result = contractService.findAll(pageable);
+		final Page<ContractResponse> result = contractService.findAll("34492352000123", pageable);
 
 		assertThat(result, notNullValue() );
 
@@ -92,12 +93,12 @@ public class ContractServiceTest {
 	@Test
 	public void shouldReturnEmptyPageTest() {
 
-		when( repository.findAll( any(Pageable.class) ) )
+		when( repository.findAllByIdCustomerCnpj( eq("34492352000123"),  any(Pageable.class) ) )
 			.thenReturn( Page.empty() );
 
 		final Pageable pageable = PageRequest.of(1, 10);
 
-		final Page<ContractResponse> result = contractService.findAll(pageable);
+		final Page<ContractResponse> result = contractService.findAll("34492352000123", pageable);
 
 		assertThat(result, notNullValue() );
 

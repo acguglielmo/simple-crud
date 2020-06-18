@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.web.util.UriComponentsBuilder.fromPath;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
 
@@ -64,13 +65,13 @@ public class ServiceIntegrationTest extends AbstractIntegrationTest<ServiceReque
 
 	    final ServiceRequest request = Fixture.from( ServiceRequest.class ).gimme( "valid" );
 
-        mockMvc.perform( post( getBaseUri().build().toUri() )
+        mockMvc.perform( post( getBaseUri() )
                 .contentType( MediaType.APPLICATION_JSON )
                 .content( new ObjectMapper().writeValueAsString( request ) ) )
             .andExpect(status().isCreated() )
             .andExpect( jsonPath("$").exists() );
 
-        mockMvc.perform( post( getBaseUri().build().toUri() )
+        mockMvc.perform( post( getBaseUri() )
                 .contentType( MediaType.APPLICATION_JSON )
                 .content( new ObjectMapper().writeValueAsString( request ) ) )
             .andExpect(status().isConflict() )
@@ -80,15 +81,15 @@ public class ServiceIntegrationTest extends AbstractIntegrationTest<ServiceReque
 	}
 
 	@Override
-	protected UriComponentsBuilder getBaseUri() {
+	protected URI getBaseUri() {
 
-		return fromPath("/services");
+		return fromPath("/services").build().toUri();
 	}
 
 	@Override
 	protected UriComponentsBuilder getResourceUri() {
 
-		return getBaseUri().path("/{id}");
+		return fromPath("/services").path("/{id}");
 
 	}
 

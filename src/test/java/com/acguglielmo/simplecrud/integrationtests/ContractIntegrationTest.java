@@ -127,7 +127,7 @@ public class ContractIntegrationTest extends AbstractIntegrationTest<ContractReq
         request.setNumber( RandomStringUtils.randomAlphanumeric(10) );
         request.setTerm( Fixture.from( TermRequest.class ).gimme("valid") );
 
-        mockMvc.perform( post( getPostUri() )
+        mockMvc.perform( post( getBaseUri() )
                 .contentType( MediaType.APPLICATION_JSON )
                 .content( new ObjectMapper().writeValueAsString( request ) ) )
             .andExpect(status().isBadRequest() )
@@ -146,13 +146,13 @@ public class ContractIntegrationTest extends AbstractIntegrationTest<ContractReq
         request.setNumber( contractNumber );
         request.setTerm( Fixture.from( TermRequest.class ).gimme("valid") );
 
-        mockMvc.perform( post( getPostUri() )
+        mockMvc.perform( post( getBaseUri() )
                 .contentType( MediaType.APPLICATION_JSON )
                 .content( new ObjectMapper().writeValueAsString( request ) ) )
             .andExpect(status().isCreated() )
             .andExpect( jsonPath("$").exists() );
 
-        mockMvc.perform( post( getPostUri() )
+        mockMvc.perform( post( getBaseUri() )
                 .contentType( MediaType.APPLICATION_JSON )
                 .content( new ObjectMapper().writeValueAsString( request ) ) )
             .andExpect(status().isConflict() )
@@ -162,21 +162,16 @@ public class ContractIntegrationTest extends AbstractIntegrationTest<ContractReq
 	}
 
 	@Override
-	protected UriComponentsBuilder getBaseUri() {
+	protected URI getBaseUri() {
 
-		return fromPath("/customers/{cnpj}/contracts");
-	}
-
-	@Override
-	protected URI getPostUri() {
-
-		return getBaseUri().build( Collections.singletonMap("cnpj", customerCnpj) );
+		return fromPath("/customers/{cnpj}/contracts")
+			.build( Collections.singletonMap("cnpj", customerCnpj) );
 	}
 
 	@Override
 	protected UriComponentsBuilder getResourceUri() {
 
-		return getBaseUri().path("/{number}");
+		return fromPath("/customers/{cnpj}/contracts").path("/{number}");
 
 	}
 

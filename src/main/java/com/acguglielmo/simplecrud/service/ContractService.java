@@ -34,9 +34,9 @@ public class ContractService {
 	@Autowired
 	private ServiceRepository serviceRepository;
 
-	public Page<ContractResponse> findAll(final Pageable pageable) {
+	public Page<ContractResponse> findAll(final String cnpj, final Pageable pageable) {
 
-		return repository.findAll(pageable)
+		return repository.findAllByIdCustomerCnpj(cnpj, pageable)
 			.map( mapper::fromEntity ) ;
 
 	}
