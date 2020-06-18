@@ -76,7 +76,8 @@ public class CustomerIntegrationTest extends AbstractIntegrationTest<CustomerReq
                 .content( new ObjectMapper().writeValueAsString( request ) ) )
             .andExpect(status().isConflict() )
             .andExpect( jsonPath("$").exists() )
-            .andExpect( jsonPath("$").value("Customer already exists!") );
+            .andExpect( jsonPath("$.message").exists() )
+            .andExpect( jsonPath("$.message").value("Customer already exists!") );
 
 	}
 

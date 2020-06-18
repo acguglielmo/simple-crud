@@ -115,7 +115,8 @@ public class ContractIntegrationTest extends AbstractIntegrationTest<ContractReq
                 .content( new ObjectMapper().writeValueAsString( request ) ) )
             .andExpect(status().isBadRequest() )
             .andExpect( jsonPath("$").exists() )
-            .andExpect( jsonPath("$").value("Customer not found!") );
+            .andExpect( jsonPath("$.message").exists() )
+            .andExpect( jsonPath("$.message").value("Customer not found!") );
 
 	}
 
@@ -132,7 +133,8 @@ public class ContractIntegrationTest extends AbstractIntegrationTest<ContractReq
                 .content( new ObjectMapper().writeValueAsString( request ) ) )
             .andExpect(status().isBadRequest() )
             .andExpect( jsonPath("$").exists() )
-            .andExpect( jsonPath("$").value("Service not found!") );
+            .andExpect( jsonPath("$.message").exists() )
+            .andExpect( jsonPath("$.message").value("Service not found!") );
 
     }
 
@@ -157,7 +159,8 @@ public class ContractIntegrationTest extends AbstractIntegrationTest<ContractReq
                 .content( new ObjectMapper().writeValueAsString( request ) ) )
             .andExpect(status().isConflict() )
             .andExpect( jsonPath("$").exists() )
-            .andExpect( jsonPath("$").value("Contract already exists!") );
+            .andExpect( jsonPath("$.message").exists() )
+            .andExpect( jsonPath("$.message").value("Contract already exists!") );
 
 	}
 

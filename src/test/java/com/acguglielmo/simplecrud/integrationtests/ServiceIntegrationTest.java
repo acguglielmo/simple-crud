@@ -76,7 +76,8 @@ public class ServiceIntegrationTest extends AbstractIntegrationTest<ServiceReque
                 .content( new ObjectMapper().writeValueAsString( request ) ) )
             .andExpect(status().isConflict() )
             .andExpect( jsonPath("$").exists() )
-            .andExpect( jsonPath("$").value("Service already exists!") );
+            .andExpect( jsonPath("$.message").exists() )
+            .andExpect( jsonPath("$.message").value("Service already exists!") );
 
 	}
 

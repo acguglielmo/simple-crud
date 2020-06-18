@@ -79,7 +79,7 @@ public class CustomerService {
 
        if ( repository.findById( cnpj ).isPresent() ) {
 
-           throw new EntityAlreadyExistsException("Customer already exists! ");
+           throw new EntityAlreadyExistsException("Customer already exists!");
 
        }
 
