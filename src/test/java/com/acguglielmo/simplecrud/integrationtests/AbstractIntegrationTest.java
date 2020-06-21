@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -34,6 +35,7 @@ import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Tag("IntegrationTest")
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = SimpleCrudApplication.class)
 public abstract class AbstractIntegrationTest<T, Y> {
