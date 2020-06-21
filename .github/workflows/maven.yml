@@ -21,7 +21,7 @@ jobs:
       with:
         java-version: 11
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn -B package jacoco:report --file pom.xml
     - name: Code coverage with Codecov
       uses: codecov/codecov-action@v1
       with:
