@@ -1,0 +1,4 @@
+#See filtering options at https://infinitest.github.io/doc/config/infinitest.filters
+
+exclude com\.acguglielmo\.simplecrud\.integrationtests\..*
+exclude com\.acguglielmo\.simplecrud\.controller\..*
