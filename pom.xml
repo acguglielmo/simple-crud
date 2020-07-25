@@ -13,10 +13,10 @@
 	<artifactId>simple-crud</artifactId>
 	<version>1.0.0</version>
 	<name>simple-crud</name>
-	<description>Simple CRUD project in Spring Boot</description>
+	<description>Simple CRUD project using Spring Boot</description>
 
 	<properties>
-		<asciidoctor-maven-plugin.version>1.6.0</asciidoctor-maven-plugin.version>
+		<asciidoctor-maven-plugin.version>2.0.0</asciidoctor-maven-plugin.version>
 		<fixture-factory.version>3.1.0</fixture-factory.version>
 		<jacoco-maven-plugin-version>0.8.5</jacoco-maven-plugin-version>
 		<java.version>11</java.version>
